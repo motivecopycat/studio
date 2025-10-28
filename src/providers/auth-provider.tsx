@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -52,7 +53,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         photoURL: firebaseUser.photoURL,
       };
       handleAuthSuccess(appUser);
-    } catch (error) {
+    } catch (error: any) {
+      // Don't show an error toast if the user closes the popup
+      if (error.code === 'auth/popup-closed-by-user') {
+        setLoading(false);
+        return;
+      }
       console.error("Google login error:", error);
       toast({
         variant: "destructive",
