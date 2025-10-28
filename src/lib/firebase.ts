@@ -1,23 +1,15 @@
-// This is a placeholder for your Firebase configuration.
-// Create a .env.local file in your project root and add your Firebase config there.
-// For example:
-// NEXT_PUBLIC_FIREBASE_API_KEY="your-api-key"
-// NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your-auth-domain"
-// NEXT_PUBLIC_FIREBASE_PROJECT_ID="your-project-id"
-// NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-storage-bucket"
-// NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-messaging-sender-id"
-// NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
-
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { getApps, initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: 'AIzaSyCHaNnkWhDHPo4Rrm_7cEjlO7G1zhuLPxU',
+  authDomain: 'kikasite-251f4.firebaseapp.com',
+  projectId: 'kikasite-251f4',
+  storageBucket: 'kikasite-251f4.appspot.com',
+  messagingSenderId: '1061899209288',
+  appId: '1:1061899209288:web:8630fb47b7b3ded399667d',
+  measurementId: 'G-5FR0E8HTDG',
 };
 
 // Initialize Firebase
