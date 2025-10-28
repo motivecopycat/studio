@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 
@@ -31,6 +32,7 @@ export default function DashboardHeader() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
+          <SheetTitle className="sr-only">Menu</SheetTitle>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/dashboard"
