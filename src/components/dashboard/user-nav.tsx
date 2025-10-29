@@ -34,7 +34,7 @@ export default function UserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <div className={cn("p-0.5 rounded-full", { "gradient-border": !user.isGuest })}>
+          <div className={cn("p-0.5 rounded-full", { "gradient-border": true })}>
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={user.photoURL ?? ""}
