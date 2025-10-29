@@ -60,7 +60,6 @@ export default function LoginPage() {
             Continue with Google
           </Button>
           <Button
-            variant="secondary"
             className="w-full h-12 text-base"
             onClick={handleGuestLogin}
             disabled={loading}
