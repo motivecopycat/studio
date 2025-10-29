@@ -48,6 +48,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button
+            variant="secondary"
             className="w-full h-12 text-base"
             onClick={handleGoogleLogin}
             disabled={loading}
