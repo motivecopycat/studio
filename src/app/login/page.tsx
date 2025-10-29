@@ -67,7 +67,9 @@ export default function LoginPage() {
           >
             {loading && action === "guest" ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
+            ) : (
+              <Icons.logo className="mr-2 h-5 w-5" />
+            )}
             Leenux
           </Button>
         </CardContent>
