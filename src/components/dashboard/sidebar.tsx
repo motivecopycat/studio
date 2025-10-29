@@ -16,18 +16,13 @@ import {
   Package2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import UserNav from "@/components/dashboard/user-nav";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Home" },
   { href: "/dashboard/campaigns", icon: Megaphone, label: "Campaigns" },
   { href: "/dashboard/analytics", icon: BarChart3, label: "Analytics" },
 ];
-
-const settingsItem = {
-  href: "/dashboard/settings",
-  icon: Settings,
-  label: "Settings",
-};
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
@@ -65,19 +60,20 @@ export default function DashboardSidebar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href={settingsItem.href}
+                href="/dashboard/settings"
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
-                  pathname === settingsItem.href &&
+                  pathname === "/dashboard/settings" &&
                     "bg-accent text-accent-foreground"
                 )}
               >
-                <settingsItem.icon className="h-5 w-5" />
-                <span className="sr-only">{settingsItem.label}</span>
+                <Settings className="h-5 w-5" />
+                <span className="sr-only">Settings</span>
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">{settingsItem.label}</TooltipContent>
+            <TooltipContent side="right">Settings</TooltipContent>
           </Tooltip>
+          <UserNav />
         </nav>
       </TooltipProvider>
     </aside>
