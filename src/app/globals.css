@@ -67,6 +67,18 @@
   }
 }
 
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @layer utilities {
   .gradient-border {
     position: relative;
@@ -87,5 +99,7 @@
     margin: -2px;
     border-radius: inherit;
     background: linear-gradient(to right, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 200% 200%;
+    animation: gradient-animation 4s ease infinite;
   }
 }
