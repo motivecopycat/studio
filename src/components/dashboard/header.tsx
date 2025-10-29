@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/sheet";
 
 import UserNav from "./user-nav";
-import ThemeSwitcher from "./theme-switcher";
-import LanguageSwitcher from "./language-switcher";
+import ThemeSwitcher from "@/components/theme-switcher";
+import LanguageSwitcher from "@/components/language-switcher";
 
 export default function DashboardHeader() {
   return (

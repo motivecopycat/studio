@@ -1,6 +1,10 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Package2 } from 'lucide-react';
+import ThemeSwitcher from '@/components/theme-switcher';
+import LanguageSwitcher from '@/components/language-switcher';
 
 export default function Home() {
   return (
@@ -10,17 +14,12 @@ export default function Home() {
           <Package2 className="h-6 w-6" />
           <span className="sr-only">KikaSite</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
             Login
           </Link>
-          <Link
-            href="/login"
-            className="text-sm font-medium hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Sign Up
-          </Link>
+          <LanguageSwitcher />
+          <ThemeSwitcher />
         </nav>
       </header>
       <main className="flex-1">
