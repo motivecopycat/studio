@@ -1,8 +1,8 @@
+
 "use client";
 
 import { useAuth } from "@/providers/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User as UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 export default function UserNav() {
   const { user, logout } = useAuth();
@@ -33,24 +34,33 @@ export default function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <div className={cn("p-0.5 rounded-full", { "gradient-border": true })}>
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={user.photoURL ?? ""}
-                alt={user.displayName ?? "User"}
-                data-ai-hint="user avatar"
-              />
-              <AvatarFallback>
-                {user.isGuest ? (
-                  <UserIcon className="h-4 w-4" />
-                ) : (
-                  getInitials(user.displayName)
-                )}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </Button>
+        <div className="flex items-center gap-3 cursor-pointer">
+            <div className={cn("p-0.5 rounded-full", { "gradient-border": true })}>
+                <Avatar className="h-8 w-8">
+                <AvatarImage
+                    src={user.photoURL ?? ""}
+                    alt={user.displayName ?? "User"}
+                    data-ai-hint="user avatar"
+                />
+                <AvatarFallback>
+                    {user.isGuest ? (
+                    <UserIcon className="h-4 w-4" />
+                    ) : (
+                    getInitials(user.displayName)
+                    )}
+                </AvatarFallback>
+                </Avatar>
+            </div>
+            <div className="hidden sm:flex flex-col text-left">
+                 <p className="text-sm font-medium leading-none">
+                    {user.displayName}
+                </p>
+                <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                </p>
+            </div>
+        </div>
+
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -8,6 +9,7 @@ import {
   Settings,
   PanelLeft,
   Package2,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,12 +17,16 @@ import {
   SheetContent,
   SheetTitle,
   SheetTrigger,
+  SheetFooter,
 } from "@/components/ui/sheet";
 
 import ThemeSwitcher from "@/components/theme-switcher";
 import LanguageSwitcher from "@/components/language-switcher";
+import { useAuth } from "@/providers/auth-provider";
+import UserNav from "./user-nav";
 
 export default function DashboardHeader() {
+  const { logout } = useAuth();
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
@@ -30,7 +36,7 @@ export default function DashboardHeader() {
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs">
+        <SheetContent side="left" className="sm:max-w-xs flex flex-col">
           <SheetTitle className="sr-only">Menu</SheetTitle>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
@@ -69,6 +75,15 @@ export default function DashboardHeader() {
               Settings
             </Link>
           </nav>
+          <SheetFooter className="mt-auto border-t pt-4">
+             <div className="flex items-center gap-4 w-full">
+                <UserNav />
+                <Button variant="ghost" size="icon" onClick={logout} className="ml-auto">
+                    <LogOut className="h-5 w-5" />
+                    <span className="sr-only">Logout</span>
+                </Button>
+             </div>
+          </SheetFooter>
         </SheetContent>
       </Sheet>
       

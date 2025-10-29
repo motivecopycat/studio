@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -17,9 +18,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserNav from "@/components/dashboard/user-nav";
-import { useAuth } from "@/providers/auth-provider";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { User } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Home" },
@@ -29,17 +27,7 @@ const navItems = [
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
-
-    const getInitials = (name: string | null) => {
-    if (!name) return "G";
-    const names = name.split(" ");
-    if (names.length > 1) {
-      return names[0][0] + names[names.length - 1][0];
-    }
-    return name[0];
-  };
-
+  
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <TooltipProvider>
