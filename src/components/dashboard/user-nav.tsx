@@ -87,8 +87,7 @@ export default function UserNav() {
       <DropdownMenuContent className="w-80" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col items-center gap-4 py-4">
-            <Avatar className="h-20 w-20">
-               <div className={cn("p-1 rounded-full", { "gradient-border": true })}>
+            <div className={cn("p-1 rounded-full", { "gradient-border": true })}>
                 <Avatar className="h-20 w-20">
                     <AvatarImage
                     src={user.photoURL ?? ""}
@@ -103,8 +102,7 @@ export default function UserNav() {
                     )}
                     </AvatarFallback>
                 </Avatar>
-               </div>
-            </Avatar>
+            </div>
             <div className="text-center">
               <p className="text-lg font-semibold leading-none">
                 {user.displayName}
