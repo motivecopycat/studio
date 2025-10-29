@@ -68,7 +68,7 @@ export default function LoginPage() {
             {loading && action === "guest" ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
-            Continue as Guest
+            Leenux
           </Button>
         </CardContent>
       </Card>
