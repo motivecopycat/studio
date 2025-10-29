@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User as UserIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function UserNav() {
   const { user, logout } = useAuth();
@@ -34,16 +35,22 @@ export default function UserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={user.photoURL ?? ""}
-              alt={user.displayName ?? "User"}
-              data-ai-hint="user avatar"
-            />
-            <AvatarFallback>
-              {user.isGuest ? <UserIcon className="h-4 w-4" /> : getInitials(user.displayName)}
-            </AvatarFallback>
-          </Avatar>
+          <div className={cn(!user.isGuest && "gradient-border")}>
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={user.photoURL ?? ""}
+                alt={user.displayName ?? "User"}
+                data-ai-hint="user avatar"
+              />
+              <AvatarFallback>
+                {user.isGuest ? (
+                  <UserIcon className="h-4 w-4" />
+                ) : (
+                  getInitials(user.displayName)
+                )}
+              </AvatarFallback>
+            </Avatar>
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
