@@ -10,6 +10,7 @@ import {
   PanelLeft,
   Package2,
   LogOut,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,9 +27,9 @@ import { useAuth } from "@/providers/auth-provider";
 import UserNav from "./user-nav";
 
 export default function DashboardHeader() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">
@@ -36,58 +37,52 @@ export default function DashboardHeader() {
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs flex flex-col">
+        <SheetContent side="left" className="flex flex-col">
           <SheetTitle className="sr-only">Menu</SheetTitle>
-          <nav className="grid gap-6 text-lg font-medium">
+          <nav className="grid gap-2 text-lg font-medium">
             <Link
               href="/dashboard"
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+              className="flex items-center gap-2 text-lg font-semibold mb-4"
             >
-              <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">KikaSite</span>
+              <Package2 className="h-6 w-6" />
+              <span>KikaSite</span>
             </Link>
             <Link
               href="/dashboard"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Home className="h-5 w-5" />
               Home
             </Link>
             <Link
               href="/dashboard/campaigns"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Megaphone className="h-5 w-5" />
               Campaigns
             </Link>
             <Link
               href="/dashboard/analytics"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <BarChart3 className="h-5 w-5" />
               Analytics
             </Link>
             <Link
               href="/dashboard/settings"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Settings className="h-5 w-5" />
               Settings
             </Link>
           </nav>
-          <SheetFooter className="mt-auto border-t pt-4">
-             <div className="flex items-center gap-4 w-full">
-                <UserNav />
-                <Button variant="ghost" size="icon" onClick={logout} className="ml-auto">
-                    <LogOut className="h-5 w-5" />
-                    <span className="sr-only">Logout</span>
-                </Button>
-             </div>
-          </SheetFooter>
+          <div className="mt-auto">
+              <UserNav />
+          </div>
         </SheetContent>
       </Sheet>
       
-      <div className="relative ml-auto flex-1 md:grow-0">
+      <div className="w-full flex-1">
         {/* Can add a search bar here later */}
       </div>
 
