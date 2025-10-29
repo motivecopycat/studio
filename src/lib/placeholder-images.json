@@ -3,8 +3,8 @@
     {
       "id": "guest-avatar",
       "description": "A generic avatar for a guest user.",
-      "imageUrl": "https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhYnN0cmFjdCUyMGdlb21ldHJpY3xlbnwwfHx8fDE3NjE2NDU2NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "abstract geometric"
+      "imageUrl": "https://images.unsplash.com/photo-1547153411-3626be18e84a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxOXx8RGV2aWwlMjBBbmdlbCUyMGFuaW1ldGVkJTIwfGVufDB8fHx8MTc2MTc1MTMxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "user avatar"
     }
   ]
 }
