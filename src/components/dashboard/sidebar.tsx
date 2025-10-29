@@ -50,7 +50,7 @@ export default function DashboardSidebar() {
             ))}
           </nav>
         </div>
-        <div className="mt-auto p-4">
+        <div className="mt-auto border-t p-2">
             <UserNav />
         </div>
       </div>
