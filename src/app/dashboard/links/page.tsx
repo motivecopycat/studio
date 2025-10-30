@@ -334,19 +334,18 @@ const LinkCards = ({
 }) => (
     <div className="space-y-4">
         {links.map((link) => (
-        <Card key={link.id} className={selectedLinks.includes(link.id) ? 'border-primary' : ''}>
+        <Card 
+            key={link.id} 
+            className={selectedLinks.includes(link.id) ? 'border-primary' : ''}
+            onClick={() => {
+                if (selectionMode) {
+                    onSelectLink(link.id, !selectedLinks.includes(link.id));
+                }
+            }}
+        >
             <CardHeader className="flex flex-row items-start justify-between">
                 <div>
-                    <CardTitle className="flex items-center gap-2">
-                        {selectionMode && (
-                          <Checkbox
-                              checked={selectedLinks.includes(link.id)}
-                              onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
-                              aria-label={`Select link ${link.name}`}
-                          />
-                        )}
-                        <span className="font-medium pr-4">{link.name}</span>
-                    </CardTitle>
+                    <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
                     <CardDescription>
                         <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
                     </CardDescription>
