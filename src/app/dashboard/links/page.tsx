@@ -464,7 +464,7 @@ export default function LinksPage() {
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
                         {!selectionMode ? (
-                            <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)}>
+                            <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)} disabled={isMobile}>
                                 Select
                             </Button>
                         ) : (
@@ -581,3 +581,5 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
