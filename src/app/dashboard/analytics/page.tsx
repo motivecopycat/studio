@@ -106,12 +106,12 @@ const revenueByCountryData = [
 ];
 
 const linkPerformanceData = [
-    { name: "Amazon Summer Sale", clicks: 5200, conversions: 650, revenue: "$12,300", epc: "$2.37", status: "Active", affiliateLink: "https://amzn.to/summer24" },
-    { name: "Coursera Data Science", clicks: 3100, conversions: 420, revenue: "$8,750", epc: "$2.82", status: "Active", affiliateLink: "https://coursera.pxf.io/ds-pro" },
-    { name: "NordVPN 2-Year Plan", clicks: 2800, conversions: 350, revenue: "$6,200", epc: "$2.21", status: "Paused", affiliateLink: "https://nordvpn.sjv.io/2y-deal" },
-    { name: "Skillshare Premium", clicks: 1900, conversions: 240, revenue: "$4,100", epc: "$2.16", status: "Active", affiliateLink: "https://skl.sh/premium-offer" },
-    { name: "Old Winter Campaign", clicks: 800, conversions: 95, revenue: "$1,500", epc: "$1.88", status: "Archived", affiliateLink: "https://amzn.to/winter23" },
-    { name: "New Tech Gadgets", clicks: 4500, conversions: 580, revenue: "$10,500", epc: "$2.33", status: "Active", affiliateLink: "https://example.com/tech-gadgets" },
+    { name: "Amazon Summer Sale", clicks: 5200, conversions: 650, status: "Active", affiliateLink: "https://amzn.to/summer24" },
+    { name: "Coursera Data Science", clicks: 3100, conversions: 420, status: "Active", affiliateLink: "https://coursera.pxf.io/ds-pro" },
+    { name: "NordVPN 2-Year Plan", clicks: 2800, conversions: 350, status: "Paused", affiliateLink: "https://nordvpn.sjv.io/2y-deal" },
+    { name: "Skillshare Premium", clicks: 1900, conversions: 240, status: "Active", affiliateLink: "https://skl.sh/premium-offer" },
+    { name: "Old Winter Campaign", clicks: 800, conversions: 95, status: "Archived", affiliateLink: "https://amzn.to/winter23" },
+    { name: "New Tech Gadgets", clicks: 4500, conversions: 580, status: "Active", affiliateLink: "https://example.com/tech-gadgets" },
 ];
 
 const chartConfig = {
@@ -126,10 +126,9 @@ const LinkPerformanceTable = () => (
             <TableRow>
             <TableHead>Link Name</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Affiliate Link</TableHead>
             <TableHead className="text-right">Clicks</TableHead>
             <TableHead className="text-right">Conversions</TableHead>
-            <TableHead className="text-right">EPC</TableHead>
-            <TableHead className="text-right">Revenue</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -144,10 +143,13 @@ const LinkPerformanceTable = () => (
                     {link.status}
                 </Badge>
                 </TableCell>
+                <TableCell>
+                    <a href={link.affiliateLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]">
+                        {link.affiliateLink}
+                    </a>
+                </TableCell>
                 <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                <TableCell className="text-right">{link.epc}</TableCell>
-                <TableCell className="text-right">{link.revenue}</TableCell>
             </TableRow>
             ))}
         </TableBody>
