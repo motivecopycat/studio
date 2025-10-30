@@ -147,7 +147,7 @@ export default function DashboardPage() {
                     <stop
                       offset="5%"
                       stopColor="var(--color-revenue)"
-                      stopOpacity={0.8}
+                      stopOpacity={0.6}
                     />
                     <stop
                       offset="95%"
@@ -179,6 +179,7 @@ export default function DashboardPage() {
                   type="natural"
                   fill="url(#colorRevenue)"
                   stroke="var(--color-revenue)"
+                  strokeWidth={2}
                   stackId="a"
                 />
               </AreaChart>
