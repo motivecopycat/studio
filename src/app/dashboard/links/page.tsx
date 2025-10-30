@@ -252,12 +252,14 @@ const LinksTable = ({
     links,
     selectedLinks,
     onSelectAll,
-    onSelectLink
+    onSelectLink,
+    selectionMode,
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
     onSelectAll: (checked: boolean) => void,
-    onSelectLink: (linkId: string, checked: boolean) => void
+    onSelectLink: (linkId: string, checked: boolean) => void,
+    selectionMode: boolean,
 }) => {
     const isAllSelected = selectedLinks.length === links.length && links.length > 0;
 
@@ -265,13 +267,15 @@ const LinksTable = ({
         <Table>
             <TableHeader>
             <TableRow>
-                <TableHead padding="checkbox">
-                    <Checkbox
-                        checked={isAllSelected}
-                        onCheckedChange={(checked) => onSelectAll(Boolean(checked))}
-                        aria-label="Select all"
-                    />
-                </TableHead>
+                {selectionMode && (
+                  <TableHead padding="checkbox">
+                      <Checkbox
+                          checked={isAllSelected}
+                          onCheckedChange={(checked) => onSelectAll(Boolean(checked))}
+                          aria-label="Select all"
+                      />
+                  </TableHead>
+                )}
                 <TableHead>Link Name</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Clicks</TableHead>
@@ -287,13 +291,15 @@ const LinksTable = ({
             <TableBody>
             {links.map((link) => (
                 <TableRow key={link.id} data-state={selectedLinks.includes(link.id) && "selected"}>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedLinks.includes(link.id)}
-                    onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
-                    aria-label={`Select link ${link.name}`}
-                  />
-                </TableCell>
+                {selectionMode && (
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedLinks.includes(link.id)}
+                      onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
+                      aria-label={`Select link ${link.name}`}
+                    />
+                  </TableCell>
+                )}
                 <TableCell className="font-medium">{link.name}</TableCell>
                 <TableCell>
                     <Badge variant={getStatusVariant(link.status)}>
@@ -318,11 +324,13 @@ const LinksTable = ({
 const LinkCards = ({ 
     links,
     selectedLinks,
-    onSelectLink
+    onSelectLink,
+    selectionMode,
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
-    onSelectLink: (linkId: string, checked: boolean) => void
+    onSelectLink: (linkId: string, checked: boolean) => void,
+    selectionMode: boolean,
 }) => (
     <div className="space-y-4">
         {links.map((link) => (
@@ -330,11 +338,13 @@ const LinkCards = ({
             <CardHeader className="flex flex-row items-start justify-between">
                 <div>
                     <CardTitle className="flex items-center gap-2">
-                        <Checkbox
-                            checked={selectedLinks.includes(link.id)}
-                            onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
-                            aria-label={`Select link ${link.name}`}
-                        />
+                        {selectionMode && (
+                          <Checkbox
+                              checked={selectedLinks.includes(link.id)}
+                              onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
+                              aria-label={`Select link ${link.name}`}
+                          />
+                        )}
                         <span className="font-medium pr-4">{link.name}</span>
                     </CardTitle>
                     <CardDescription>
@@ -383,6 +393,7 @@ export default function LinksPage() {
     const [itemsPerPage, setItemsPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
+    const [selectionMode, setSelectionMode] = React.useState(false);
 
 
     const filteredLinks = linksData.filter(link => {
@@ -415,7 +426,13 @@ export default function LinksPage() {
 
     React.useEffect(() => {
         setSelectedLinks([]);
-    }, [currentPage, itemsPerPage, statusFilter, searchTerm]);
+    }, [currentPage, itemsPerPage, statusFilter, searchTerm, selectionMode]);
+    
+    React.useEffect(() => {
+        if (isMobile) {
+            setSelectionMode(false);
+        }
+    }, [isMobile]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -446,19 +463,30 @@ export default function LinksPage() {
                         />
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="flex-1 sm:flex-initial" disabled={selectedLinks.length === 0}>
-                                    Bulk Actions
-                                    <ChevronDown className="ml-2 h-4 w-4" />
+                        {!selectionMode ? (
+                            <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)}>
+                                Select
+                            </Button>
+                        ) : (
+                            <>
+                                <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(false)}>
+                                    Cancel
                                 </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem>Activate Selected</DropdownMenuItem>
-                                <DropdownMenuItem>Pause Selected</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-500">Archive Selected</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className="flex-1 sm:flex-initial" disabled={selectedLinks.length === 0}>
+                                            Actions
+                                            <ChevronDown className="ml-2 h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem>Activate Selected</DropdownMenuItem>
+                                        <DropdownMenuItem>Pause Selected</DropdownMenuItem>
+                                        <DropdownMenuItem className="text-red-500">Archive Selected</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </>
+                        )}
                         <Button variant="outline" className="flex-1 sm:flex-initial">
                             <FileDown className="mr-2 h-4 w-4" />
                             Export
@@ -484,12 +512,14 @@ export default function LinksPage() {
                         links={paginatedLinks}
                         selectedLinks={selectedLinks}
                         onSelectLink={handleSelectLink}
+                        selectionMode={selectionMode}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
                         selectedLinks={selectedLinks}
                         onSelectAll={handleSelectAll}
                         onSelectLink={handleSelectLink}
+                        selectionMode={selectionMode}
                     />}
             </CardContent>
             <CardFooter>
