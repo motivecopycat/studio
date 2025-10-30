@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   PlusCircle,
   MoreHorizontal,
@@ -50,6 +51,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  ChevronDown
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -61,6 +63,7 @@ import {
 
 const linksData = [
   {
+    id: "link1",
     name: "Amazon Summer Sale",
     link: "https://amzn.to/summer24",
     status: "Active",
@@ -71,6 +74,7 @@ const linksData = [
     createdAt: "2024-05-01",
   },
   {
+    id: "link2",
     name: "Coursera Data Science",
     link: "https://coursera.pxf.io/ds-pro",
     status: "Active",
@@ -81,6 +85,7 @@ const linksData = [
     createdAt: "2024-04-15",
   },
   {
+    id: "link3",
     name: "NordVPN 2-Year Plan",
     link: "https://nordvpn.sjv.io/2y-deal",
     status: "Paused",
@@ -91,6 +96,7 @@ const linksData = [
     createdAt: "2024-03-20",
   },
   {
+    id: "link4",
     name: "Skillshare Premium",
     link: "https://skl.sh/premium-offer",
     status: "Active",
@@ -101,6 +107,7 @@ const linksData = [
     createdAt: "2024-03-01",
   },
   {
+    id: "link5",
     name: "Old Winter Campaign",
     link: "https://amzn.to/winter23",
     status: "Archived",
@@ -111,6 +118,7 @@ const linksData = [
     createdAt: "2023-11-10",
   },
   {
+    id: "link6",
     name: "New Tech Gadgets",
     link: "https://example.com/tech-gadgets",
     status: "Active",
@@ -121,6 +129,7 @@ const linksData = [
     createdAt: "2024-05-12",
   },
   {
+    id: "link7",
     name: "Fitness App Subscription",
     link: "https://example.com/fitness-app",
     status: "Active",
@@ -131,6 +140,7 @@ const linksData = [
     createdAt: "2024-05-05",
   },
   {
+    id: "link8",
     name: "Online Mattress Store",
     link: "https://example.com/mattress",
     status: "Active",
@@ -141,6 +151,7 @@ const linksData = [
     createdAt: "2024-05-20",
   },
   {
+    id: "link9",
     name: "Meal Kit Delivery Service",
     link: "https://example.com/mealkit",
     status: "Paused",
@@ -151,6 +162,7 @@ const linksData = [
     createdAt: "2024-02-10",
   },
   {
+    id: "link10",
     name: "Web Hosting Annual Plan",
     link: "https://example.com/webhost",
     status: "Active",
@@ -161,6 +173,7 @@ const linksData = [
     createdAt: "2024-05-22",
   },
   {
+    id: "link11",
     name: "E-book on Productivity",
     link: "https://example.com/ebook",
     status: "Archived",
@@ -171,6 +184,7 @@ const linksData = [
     createdAt: "2023-10-01",
   },
   {
+    id: "link12",
     name: "Travel Booking Site",
     link: "https://example.com/travel",
     status: "Active",
@@ -234,57 +248,100 @@ const LinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
     </DropdownMenu>
 );
 
-const LinksTable = ({ links }: { links: typeof linksData }) => (
-    <Table>
-        <TableHeader>
-        <TableRow>
-            <TableHead>Link Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Clicks</TableHead>
-            <TableHead className="text-right">Conversions</TableHead>
-            <TableHead className="text-right">EPC</TableHead>
-            <TableHead className="text-right">Revenue</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>
-            <span className="sr-only">Actions</span>
-            </TableHead>
-        </TableRow>
-        </TableHeader>
-        <TableBody>
-        {links.map((link) => (
-            <TableRow key={link.name}>
-            <TableCell className="font-medium">{link.name}</TableCell>
-            <TableCell>
-                <Badge variant={getStatusVariant(link.status)}>
-                {link.status}
-                </Badge>
-            </TableCell>
-            <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
-            <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-            <TableCell className="text-right">{link.epc}</TableCell>
-            <TableCell className="text-right">{link.revenue}</TableCell>
-            <TableCell>{link.createdAt}</TableCell>
-            <TableCell>
-                <LinkActions link={link} />
-            </TableCell>
-            </TableRow>
-        ))}
-        </TableBody>
-    </Table>
-);
+const LinksTable = ({ 
+    links,
+    selectedLinks,
+    onSelectAll,
+    onSelectLink
+}: { 
+    links: typeof linksData,
+    selectedLinks: string[],
+    onSelectAll: (checked: boolean) => void,
+    onSelectLink: (linkId: string, checked: boolean) => void
+}) => {
+    const isAllSelected = selectedLinks.length === links.length && links.length > 0;
 
-const LinkCards = ({ links }: { links: typeof linksData }) => (
+    return (
+        <Table>
+            <TableHeader>
+            <TableRow>
+                <TableHead padding="checkbox">
+                    <Checkbox
+                        checked={isAllSelected}
+                        onCheckedChange={(checked) => onSelectAll(Boolean(checked))}
+                        aria-label="Select all"
+                    />
+                </TableHead>
+                <TableHead>Link Name</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Clicks</TableHead>
+                <TableHead className="text-right">Conversions</TableHead>
+                <TableHead className="text-right">EPC</TableHead>
+                <TableHead className="text-right">Revenue</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead>
+                <span className="sr-only">Actions</span>
+                </TableHead>
+            </TableRow>
+            </TableHeader>
+            <TableBody>
+            {links.map((link) => (
+                <TableRow key={link.id} data-state={selectedLinks.includes(link.id) && "selected"}>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedLinks.includes(link.id)}
+                    onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
+                    aria-label={`Select link ${link.name}`}
+                  />
+                </TableCell>
+                <TableCell className="font-medium">{link.name}</TableCell>
+                <TableCell>
+                    <Badge variant={getStatusVariant(link.status)}>
+                    {link.status}
+                    </Badge>
+                </TableCell>
+                <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
+                <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
+                <TableCell className="text-right">{link.epc}</TableCell>
+                <TableCell className="text-right">{link.revenue}</TableCell>
+                <TableCell>{link.createdAt}</TableCell>
+                <TableCell>
+                    <LinkActions link={link} />
+                </TableCell>
+                </TableRow>
+            ))}
+            </TableBody>
+        </Table>
+    )
+};
+
+const LinkCards = ({ 
+    links,
+    selectedLinks,
+    onSelectLink
+}: { 
+    links: typeof linksData,
+    selectedLinks: string[],
+    onSelectLink: (linkId: string, checked: boolean) => void
+}) => (
     <div className="space-y-4">
         {links.map((link) => (
-        <Card key={link.name}>
-            <CardHeader>
-                <CardTitle className="flex justify-between items-start">
-                    <span className="font-medium pr-4">{link.name}</span>
-                    <LinkActions link={link} />
-                </CardTitle>
-                <CardDescription>
-                    <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
-                </CardDescription>
+        <Card key={link.id} className={selectedLinks.includes(link.id) ? 'border-primary' : ''}>
+            <CardHeader className="flex flex-row items-start justify-between">
+                <div>
+                    <CardTitle className="flex items-center gap-2">
+                        <Checkbox
+                            checked={selectedLinks.includes(link.id)}
+                            onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
+                            aria-label={`Select link ${link.name}`}
+                        />
+                        <span className="font-medium pr-4">{link.name}</span>
+                    </CardTitle>
+                    <CardDescription>
+                        <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
+                    </CardDescription>
+                </div>
+                <LinkActions link={link} />
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
                 <div className="flex justify-between">
@@ -325,6 +382,8 @@ export default function LinksPage() {
     const [statusFilter, setStatusFilter] = React.useState("all");
     const [itemsPerPage, setItemsPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
+    const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
+
 
     const filteredLinks = linksData.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -337,6 +396,26 @@ export default function LinksPage() {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedLinks(paginatedLinks.map(link => link.id));
+        } else {
+            setSelectedLinks([]);
+        }
+    };
+    
+    const handleSelectLink = (linkId: string, checked: boolean) => {
+        if (checked) {
+            setSelectedLinks(prev => [...prev, linkId]);
+        } else {
+            setSelectedLinks(prev => prev.filter(id => id !== linkId));
+        }
+    };
+
+    React.useEffect(() => {
+        setSelectedLinks([]);
+    }, [currentPage, itemsPerPage, statusFilter, searchTerm]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -367,6 +446,19 @@ export default function LinksPage() {
                         />
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" className="flex-1 sm:flex-initial" disabled={selectedLinks.length === 0}>
+                                    Bulk Actions
+                                    <ChevronDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem>Activate Selected</DropdownMenuItem>
+                                <DropdownMenuItem>Pause Selected</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-500">Archive Selected</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button variant="outline" className="flex-1 sm:flex-initial">
                             <FileDown className="mr-2 h-4 w-4" />
                             Export
@@ -387,12 +479,25 @@ export default function LinksPage() {
                 </Tabs>
             </CardHeader>
             <CardContent>
-                {isMobile ? <LinkCards links={paginatedLinks} /> : <LinksTable links={paginatedLinks} />}
+                {isMobile ? 
+                    <LinkCards 
+                        links={paginatedLinks}
+                        selectedLinks={selectedLinks}
+                        onSelectLink={handleSelectLink}
+                    /> : 
+                    <LinksTable 
+                        links={paginatedLinks}
+                        selectedLinks={selectedLinks}
+                        onSelectAll={handleSelectAll}
+                        onSelectLink={handleSelectLink}
+                    />}
             </CardContent>
             <CardFooter>
                 <div className="flex items-center justify-between w-full">
                     <div className="text-sm text-muted-foreground">
-                        Showing {paginatedLinks.length} of {filteredLinks.length} links
+                        {selectedLinks.length > 0
+                        ? `${selectedLinks.length} of ${paginatedLinks.length} selected`
+                        : `Showing ${paginatedLinks.length} of ${filteredLinks.length} links`}
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -446,5 +551,3 @@ export default function LinksPage() {
     </div>
   );
 }
-
-    
