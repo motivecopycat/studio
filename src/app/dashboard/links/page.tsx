@@ -231,7 +231,7 @@ const LinkCards = ({ links }: { links: typeof linksData }) => (
                     <div>{link.epc}</div>
                 </div>
                  <div>
-                    <div className="text-muted-foreground">Revenue</div>
+                    <div className="text-muted-foreground"></div>
                     <div>{link.revenue}</div>
                 </div>
                 <div className="col-span-2">
