@@ -61,24 +61,28 @@ const kpiData = [
     value: "1,235,632",
     change: "+12.5% vs last period",
     icon: MousePointerClick,
+    positive: true,
   },
   {
     title: "Conversion Rate",
     value: "12.5%",
     change: "+1.2% vs last period",
     icon: TrendingUp,
+    positive: true,
   },
   {
     title: "Revenue",
     value: "$45,231.89",
     change: "+20.1% vs last period",
     icon: DollarSign,
+    positive: true,
   },
   {
     title: "Earnings Per Click",
     value: "$0.037",
     change: "+8.1% vs last period",
     icon: CircleDollarSign,
+    positive: true,
   },
 ];
 
@@ -253,7 +257,14 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
-              <p className="text-xs text-muted-foreground">{kpi.change}</p>
+              <p
+                className={cn(
+                  "text-xs text-muted-foreground",
+                  kpi.positive ? "text-green-600" : "text-red-600"
+                )}
+              >
+                {kpi.change}
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -337,5 +348,3 @@ export default function AnalyticsPage() {
     </div>
   );
 }
-
-    
