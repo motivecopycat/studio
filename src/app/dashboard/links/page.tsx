@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -16,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +40,7 @@ import {
   PlayCircle,
   Search,
   FileDown,
+  ArrowRight,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -226,19 +229,20 @@ const LinkCards = ({ links }: { links: typeof linksData }) => (
                     <div className="text-muted-foreground">Conversions</div>
                     <div>{link.conversions.toLocaleString()}</div>
                 </div>
-                <div>
-                    <div className="text-muted-foreground">EPC</div>
-                    <div>{link.epc}</div>
-                </div>
-                 <div>
-                    <div className="text-muted-foreground"></div>
-                    <div>{link.revenue}</div>
-                </div>
                 <div className="col-span-2">
                     <div className="text-muted-foreground">Created At</div>
                     <div>{link.createdAt}</div>
                 </div>
             </CardContent>
+             <CardFooter>
+                 <Link
+                    href="/dashboard/analytics"
+                    className="w-full flex items-center justify-center text-sm font-medium text-primary hover:underline"
+                    >
+                    View Details
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+            </CardFooter>
         </Card>
         ))}
     </div>
@@ -306,3 +310,4 @@ export default function LinksPage() {
   );
 }
 
+    
