@@ -3,6 +3,10 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
 import {
   Table,
   TableBody,
@@ -29,6 +33,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -47,8 +68,6 @@ import {
   PauseCircle,
   PlayCircle,
   Search,
-  FileDown,
-  ArrowRight,
   ChevronLeft,
   ChevronRight,
   ChevronDown
@@ -59,6 +78,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 
 const linksData = [
@@ -375,9 +395,102 @@ const LinkCards = ({
     </div>
 );
 
+const AddLinkSchema = z.object({
+    name: z.string().min(1, { message: "Link name is required." }),
+    url: z.string().url({ message: "Please enter a valid URL." }),
+});
+
+type AddLinkValues = z.infer<typeof AddLinkSchema>;
+
+const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void }) => {
+    const [open, setOpen] = React.useState(false);
+    const { toast } = useToast();
+
+    const form = useForm<AddLinkValues>({
+        resolver: zodResolver(AddLinkSchema),
+        defaultValues: {
+            name: "",
+            url: "",
+        },
+    });
+
+    const onSubmit = (data: AddLinkValues) => {
+        const newLink = {
+            id: `link${Date.now()}`,
+            name: data.name,
+            link: data.url,
+            status: "Active",
+            clicks: 0,
+            conversions: 0,
+            epc: "$0.00",
+            revenue: "$0.00",
+            createdAt: new Date().toISOString().split("T")[0],
+        };
+        onLinkAdded(newLink);
+        toast({
+            title: "Link Created",
+            description: `The link "${data.name}" has been successfully created.`,
+        });
+        form.reset();
+        setOpen(false);
+    };
+    
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="flex-1 sm:flex-initial">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add New Link
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Add New Link</DialogTitle>
+                    <DialogDescription>
+                        Create a new affiliate link to start tracking its performance.
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Link Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g. Amazon Summer Sale" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="url"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Affiliate URL</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="https://..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <DialogFooter>
+                            <Button type="submit">Create Link</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    )
+}
 
 export default function LinksPage() {
     const isMobile = useIsMobile();
+    const [allLinks, setAllLinks] = React.useState(linksData);
     const [searchTerm, setSearchTerm] = React.useState("");
     const [statusFilter, setStatusFilter] = React.useState("all");
     const [itemsPerPage, setItemsPerPage] = React.useState(10);
@@ -385,8 +498,11 @@ export default function LinksPage() {
     const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
     const [selectionMode, setSelectionMode] = React.useState(false);
 
+    const handleAddNewLink = (newLink: any) => {
+        setAllLinks([newLink, ...allLinks]);
+    };
 
-    const filteredLinks = linksData.filter(link => {
+    const filteredLinks = allLinks.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
         return matchesSearch && matchesStatus;
@@ -415,8 +531,14 @@ export default function LinksPage() {
     };
 
     React.useEffect(() => {
+        if (!selectionMode) {
+            setSelectedLinks([]);
+        }
+    }, [selectionMode]);
+
+    React.useEffect(() => {
         setSelectedLinks([]);
-    }, [currentPage, itemsPerPage, statusFilter, searchTerm, selectionMode]);
+    }, [currentPage, itemsPerPage, statusFilter, searchTerm]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -471,10 +593,7 @@ export default function LinksPage() {
                                 </DropdownMenu>
                             </>
                         )}
-                        <Button className="flex-1 sm:flex-initial">
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Add New Link
-                        </Button>
+                         <AddNewLinkDialog onLinkAdded={handleAddNewLink} />
                     </div>
                 </div>
                 <Tabs defaultValue="all" className="w-full pt-4" onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }}>
