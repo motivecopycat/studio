@@ -28,6 +28,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -41,6 +48,8 @@ import {
   Search,
   FileDown,
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -120,6 +129,56 @@ const linksData = [
     epc: "$2.50",
     revenue: "$9,500",
     createdAt: "2024-05-05",
+  },
+  {
+    name: "Online Mattress Store",
+    link: "https://example.com/mattress",
+    status: "Active",
+    clicks: 6200,
+    conversions: 750,
+    epc: "$3.10",
+    revenue: "$19,220",
+    createdAt: "2024-05-20",
+  },
+  {
+    name: "Meal Kit Delivery Service",
+    link: "https://example.com/mealkit",
+    status: "Paused",
+    clicks: 1500,
+    conversions: 180,
+    epc: "$2.90",
+    revenue: "$4,350",
+    createdAt: "2024-02-10",
+  },
+  {
+    name: "Web Hosting Annual Plan",
+    link: "https://example.com/webhost",
+    status: "Active",
+    clicks: 7100,
+    conversions: 820,
+    epc: "$2.75",
+    revenue: "$19,525",
+    createdAt: "2024-05-22",
+  },
+  {
+    name: "E-book on Productivity",
+    link: "https://example.com/ebook",
+    status: "Archived",
+    clicks: 500,
+    conversions: 60,
+    epc: "$1.50",
+    revenue: "$750",
+    createdAt: "2023-10-01",
+  },
+  {
+    name: "Travel Booking Site",
+    link: "https://example.com/travel",
+    status: "Active",
+    clicks: 9800,
+    conversions: 1100,
+    epc: "$3.50",
+    revenue: "$34,300",
+    createdAt: "2024-05-18",
   },
 ];
 
@@ -264,12 +323,26 @@ export default function LinksPage() {
     const isMobile = useIsMobile();
     const [searchTerm, setSearchTerm] = React.useState("");
     const [statusFilter, setStatusFilter] = React.useState("all");
+    const [itemsPerPage, setItemsPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
 
     const filteredLinks = linksData.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
         return matchesSearch && matchesStatus;
     });
+
+    const totalPages = Math.ceil(filteredLinks.length / itemsPerPage);
+    const paginatedLinks = filteredLinks.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    }
   
     return (
     <div className="space-y-6">
@@ -304,7 +377,7 @@ export default function LinksPage() {
                         </Button>
                     </div>
                 </div>
-                <Tabs defaultValue="all" className="w-full pt-4" onValueChange={setStatusFilter}>
+                <Tabs defaultValue="all" className="w-full pt-4" onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }}>
                     <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="all">All</TabsTrigger>
                         <TabsTrigger value="active">Active</TabsTrigger>
@@ -314,8 +387,61 @@ export default function LinksPage() {
                 </Tabs>
             </CardHeader>
             <CardContent>
-                {isMobile ? <LinkCards links={filteredLinks} /> : <LinksTable links={filteredLinks} />}
+                {isMobile ? <LinkCards links={paginatedLinks} /> : <LinksTable links={paginatedLinks} />}
             </CardContent>
+            <CardFooter>
+                <div className="flex items-center justify-between w-full">
+                    <div className="text-sm text-muted-foreground">
+                        Showing {paginatedLinks.length} of {filteredLinks.length} links
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium">Rows per page</p>
+                            <Select
+                                value={`${itemsPerPage}`}
+                                onValueChange={(value) => {
+                                setItemsPerPage(Number(value));
+                                setCurrentPage(1);
+                                }}
+                            >
+                                <SelectTrigger className="h-8 w-[70px]">
+                                    <SelectValue placeholder={itemsPerPage} />
+                                </SelectTrigger>
+                                <SelectContent side="top">
+                                {[10, 20, 50, 100].map((pageSize) => (
+                                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                                    {pageSize}
+                                    </SelectItem>
+                                ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+                            Page {currentPage} of {totalPages}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                className="h-8 w-8 p-0"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <span className="sr-only">Go to previous page</span>
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="h-8 w-8 p-0"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <span className="sr-only">Go to next page</span>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </CardFooter>
         </Card>
     </div>
   );
