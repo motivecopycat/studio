@@ -487,10 +487,6 @@ export default function LinksPage() {
                                 </DropdownMenu>
                             </>
                         )}
-                        <Button variant="outline" className="flex-1 sm:flex-initial">
-                            <FileDown className="mr-2 h-4 w-4" />
-                            Export
-                        </Button>
                         <Button className="flex-1 sm:flex-initial">
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Add New Link
@@ -582,4 +578,5 @@ export default function LinksPage() {
   );
 }
 
+    
     
