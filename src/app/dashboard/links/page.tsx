@@ -371,15 +371,6 @@ const LinkCards = ({
                     </div>
                 </div>
             </CardContent>
-             <CardFooter>
-                 <Link
-                    href="/dashboard/analytics"
-                    className="w-full flex items-center justify-center text-sm font-medium text-primary hover:underline"
-                    >
-                    View Details
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-            </CardFooter>
         </Card>
         ))}
     </div>
