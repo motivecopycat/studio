@@ -5,9 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
-  Megaphone,
   BarChart3,
+  Link2,
   Settings,
+  AppWindow,
+  CreditCard,
   Package2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,9 +17,12 @@ import UserNav from "@/components/dashboard/user-nav";
 import { useAuth } from "@/providers/auth-provider";
 
 const navItems = [
-  { href: "/dashboard", icon: Home, label: "Home" },
-  { href: "/dashboard/campaigns", icon: Megaphone, label: "Campaigns" },
-  { href: "/dashboard/analytics", icon: BarChart3, label: "Analytics" },
+  { href: "/dashboard", icon: Home, label: "Dashboard" },
+  { href: "/dashboard/analytics", icon: BarChart3, label: "Analysis" },
+  { href: "/dashboard/links", icon: Link2, label: "Link list" },
+  { href: "/dashboard/settings", icon: Settings, label: "Account settings" },
+  { href: "/dashboard/integrations", icon: AppWindow, label: "Apps integration" },
+  { href: "/dashboard/subscription", icon: CreditCard, label: "Subscription" },
 ];
 
 export default function DashboardSidebar() {

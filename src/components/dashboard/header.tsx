@@ -4,13 +4,15 @@
 import Link from "next/link";
 import {
   Home,
-  Megaphone,
   BarChart3,
   Settings,
   PanelLeft,
   Package2,
   LogOut,
   User,
+  Link2,
+  AppWindow,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,28 +54,42 @@ export default function DashboardHeader() {
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Home className="h-5 w-5" />
-              Home
-            </Link>
-            <Link
-              href="/dashboard/campaigns"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Megaphone className="h-5 w-5" />
-              Campaigns
+              Dashboard
             </Link>
             <Link
               href="/dashboard/analytics"
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <BarChart3 className="h-5 w-5" />
-              Analytics
+              Analysis
+            </Link>
+            <Link
+              href="/dashboard/links"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            >
+              <Link2 className="h-5 w-5" />
+              Link list
             </Link>
             <Link
               href="/dashboard/settings"
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Settings className="h-5 w-5" />
-              Settings
+              Account settings
+            </Link>
+            <Link
+              href="/dashboard/integrations"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            >
+              <AppWindow className="h-5 w-5" />
+              Apps integration
+            </Link>
+            <Link
+              href="/dashboard/subscription"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            >
+              <CreditCard className="h-5 w-5" />
+              Subscription
             </Link>
           </nav>
           <div className="mt-auto">
