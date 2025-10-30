@@ -227,14 +227,9 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
+const LinkActions = ({ link, children }: { link: (typeof linksData)[0], children: React.ReactNode }) => (
     <Popover>
-        <PopoverTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-        </Button>
-        </PopoverTrigger>
+        {children}
         <PopoverContent align="end" className="w-48 p-2">
         <div className="flex flex-col space-y-1">
           <Button variant="ghost" className="w-full justify-start text-sm">
@@ -275,6 +270,17 @@ const LinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
     </Popover>
 );
 
+const DesktopLinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
+    <LinkActions link={link}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </PopoverTrigger>
+    </LinkActions>
+);
+
 const LinksTable = ({ links }: { links: typeof linksData }) => {
     return (
         <Table>
@@ -309,7 +315,7 @@ const LinksTable = ({ links }: { links: typeof linksData }) => {
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
                 <TableCell>
-                    <LinkActions link={link} />
+                    <DesktopLinkActions link={link} />
                 </TableCell>
                 </TableRow>
             ))}
@@ -326,49 +332,60 @@ const LinkCards = ({
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
-    onSelectLink: (linkId: string, checked: boolean) => void,
+    onSelectLink: (linkId: string) => void,
     selectionMode: boolean,
 }) => (
     <div className="space-y-4">
-        {links.map((link) => (
-        <Card 
-            key={link.id} 
-            className={selectedLinks.includes(link.id) ? 'border-primary' : ''}
-            onClick={() => {
-                if (selectionMode) {
-                    onSelectLink(link.id, !selectedLinks.includes(link.id));
-                }
-            }}
-        >
-            <CardHeader className="flex flex-row items-start justify-between">
-                <div>
-                    <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
-                    <CardDescription>
-                        <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
-                    </CardDescription>
-                </div>
-                <LinkActions link={link} />
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                    <div className="flex flex-col">
-                        <span className="text-muted-foreground">Clicks</span>
-                        <span className="font-medium">{link.clicks.toLocaleString()}</span>
-                    </div>
-                    <div className="flex flex-col items-end">
-                        <span className="text-muted-foreground">Conversions</span>
-                        <span className="font-medium">{link.conversions.toLocaleString()}</span>
-                    </div>
-                </div>
-                 <div>
-                    <div className="text-muted-foreground">Affiliate Link</div>
-                    <div className="truncate text-primary hover:underline">
-                        <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-        ))}
+        {links.map((link) => {
+            const cardContent = (
+                <Card 
+                    key={link.id} 
+                    className={selectedLinks.includes(link.id) ? 'border-primary' : ''}
+                    onClick={() => {
+                        if (selectionMode) {
+                            onSelectLink(link.id);
+                        }
+                    }}
+                >
+                    <CardHeader className="flex flex-row items-start justify-between">
+                        <div>
+                            <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
+                            <CardDescription>
+                                <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
+                            </CardDescription>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <div className="flex flex-col">
+                                <span className="text-muted-foreground">Clicks</span>
+                                <span className="font-medium">{link.clicks.toLocaleString()}</span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-muted-foreground">Conversions</span>
+                                <span className="font-medium">{link.conversions.toLocaleString()}</span>
+                            </div>
+                        </div>
+                         <div>
+                            <div className="text-muted-foreground">Affiliate Link</div>
+                            <div className="truncate text-primary hover:underline">
+                                <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            );
+
+            if (selectionMode) {
+                return cardContent;
+            }
+
+            return (
+                <LinkActions key={link.id} link={link}>
+                    <PopoverTrigger asChild>{cardContent}</PopoverTrigger>
+                </LinkActions>
+            );
+        })}
     </div>
 );
 
@@ -541,12 +558,12 @@ export default function LinksPage() {
         currentPage * itemsPerPage
     );
     
-    const handleSelectLink = (linkId: string, checked: boolean) => {
-        if (checked) {
-            setSelectedLinks(prev => [...prev, linkId]);
-        } else {
-            setSelectedLinks(prev => prev.filter(id => id !== linkId));
-        }
+    const handleSelectLink = (linkId: string) => {
+        setSelectedLinks(prev => 
+            prev.includes(linkId) 
+                ? prev.filter(id => id !== linkId)
+                : [...prev, linkId]
+        );
     };
 
     React.useEffect(() => {
