@@ -98,10 +98,6 @@ export default function UserNav() {
               </div>
             </DropdownMenuItem>
         ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => logout()} className="cursor-pointer">
-          <LogOut className="mr-2 h-4 w-4" />
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
