@@ -53,6 +53,7 @@ import {
 const linksData = [
   {
     name: "Amazon Summer Sale",
+    link: "https://amzn.to/summer24",
     status: "Active",
     clicks: 5200,
     conversions: 650,
@@ -62,6 +63,7 @@ const linksData = [
   },
   {
     name: "Coursera Data Science",
+    link: "https://coursera.pxf.io/ds-pro",
     status: "Active",
     clicks: 3100,
     conversions: 420,
@@ -71,6 +73,7 @@ const linksData = [
   },
   {
     name: "NordVPN 2-Year Plan",
+    link: "https://nordvpn.sjv.io/2y-deal",
     status: "Paused",
     clicks: 2800,
     conversions: 350,
@@ -80,6 +83,7 @@ const linksData = [
   },
   {
     name: "Skillshare Premium",
+    link: "https://skl.sh/premium-offer",
     status: "Active",
     clicks: 1900,
     conversions: 240,
@@ -89,6 +93,7 @@ const linksData = [
   },
   {
     name: "Old Winter Campaign",
+    link: "https://amzn.to/winter23",
     status: "Archived",
     clicks: 800,
     conversions: 95,
@@ -98,6 +103,7 @@ const linksData = [
   },
   {
     name: "New Tech Gadgets",
+    link: "https://example.com/tech-gadgets",
     status: "Active",
     clicks: 4500,
     conversions: 580,
@@ -107,6 +113,7 @@ const linksData = [
   },
   {
     name: "Fitness App Subscription",
+    link: "https://example.com/fitness-app",
     status: "Active",
     clicks: 3800,
     conversions: 490,
@@ -228,6 +235,12 @@ const LinkCards = ({ links }: { links: typeof linksData }) => (
                 <div>
                     <div className="text-muted-foreground">Conversions</div>
                     <div>{link.conversions.toLocaleString()}</div>
+                </div>
+                <div className="col-span-2">
+                    <div className="text-muted-foreground">Affiliate Link</div>
+                    <div className="truncate text-primary hover:underline">
+                        <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
+                    </div>
                 </div>
                 <div className="col-span-2">
                     <div className="text-muted-foreground">Created At</div>
