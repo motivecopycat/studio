@@ -418,12 +418,6 @@ export default function LinksPage() {
     React.useEffect(() => {
         setSelectedLinks([]);
     }, [currentPage, itemsPerPage, statusFilter, searchTerm, selectionMode]);
-    
-    React.useEffect(() => {
-        if (isMobile) {
-            setSelectionMode(false);
-        }
-    }, [isMobile]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -455,7 +449,7 @@ export default function LinksPage() {
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
                         {!selectionMode ? (
-                            <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)} disabled={isMobile}>
+                            <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)}>
                                 Select
                             </Button>
                         ) : (
@@ -568,8 +562,3 @@ export default function LinksPage() {
     </div>
   );
 }
-
-    
-    
-
-    
