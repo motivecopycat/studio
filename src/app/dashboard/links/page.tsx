@@ -372,7 +372,7 @@ const LinkCards = ({
                 </div>
                 <LinkActions link={link} />
             </CardHeader>
-            <CardContent className="space-y-4 text-sm">
+            <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between">
                     <div className="flex flex-col">
                         <span className="text-muted-foreground">Clicks</span>
@@ -398,6 +398,9 @@ const LinkCards = ({
 const AddLinkSchema = z.object({
     name: z.string().min(1, { message: "Link name is required." }),
     url: z.string().url({ message: "Please enter a valid URL." }),
+    category: z.enum(["product", "movie"], {
+        required_error: "You need to select a category.",
+    }),
 });
 
 type AddLinkValues = z.infer<typeof AddLinkSchema>;
@@ -425,6 +428,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
             epc: "$0.00",
             revenue: "$0.00",
             createdAt: new Date().toISOString().split("T")[0],
+            category: data.category,
         };
         onLinkAdded(newLink);
         toast({
@@ -475,6 +479,34 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                                         <Input placeholder="https://..." {...field} />
                                     </FormControl>
                                     <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem className="space-y-3">
+                                <FormLabel>Category</FormLabel>
+                                <FormControl>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Button 
+                                            type="button" 
+                                            variant={field.value === 'product' ? 'default' : 'outline'}
+                                            onClick={() => field.onChange('product')}
+                                        >
+                                            Product
+                                        </Button>
+                                        <Button 
+                                            type="button" 
+                                            variant={field.value === 'movie' ? 'default' : 'outline'}
+                                            onClick={() => field.onChange('movie')}
+                                        >
+                                            Movie
+                                        </Button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -680,3 +712,5 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
