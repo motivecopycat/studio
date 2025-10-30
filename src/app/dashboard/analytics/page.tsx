@@ -106,12 +106,12 @@ const revenueByCountryData = [
 ];
 
 const linkPerformanceData = [
-    { name: "Amazon Summer Sale", clicks: 5200, conversions: 650, revenue: "$12,300", epc: "$2.37", status: "Active" },
-    { name: "Coursera Data Science", clicks: 3100, conversions: 420, revenue: "$8,750", epc: "$2.82", status: "Active" },
-    { name: "NordVPN 2-Year Plan", clicks: 2800, conversions: 350, revenue: "$6,200", epc: "$2.21", status: "Paused" },
-    { name: "Skillshare Premium", clicks: 1900, conversions: 240, revenue: "$4,100", epc: "$2.16", status: "Active" },
-    { name: "Old Winter Campaign", clicks: 800, conversions: 95, revenue: "$1,500", epc: "$1.88", status: "Archived" },
-    { name: "New Tech Gadgets", clicks: 4500, conversions: 580, revenue: "$10,500", epc: "$2.33", status: "Active" },
+    { name: "Amazon Summer Sale", clicks: 5200, conversions: 650, revenue: "$12,300", epc: "$2.37", status: "Active", affiliateLink: "https://amzn.to/summer24" },
+    { name: "Coursera Data Science", clicks: 3100, conversions: 420, revenue: "$8,750", epc: "$2.82", status: "Active", affiliateLink: "https://coursera.pxf.io/ds-pro" },
+    { name: "NordVPN 2-Year Plan", clicks: 2800, conversions: 350, revenue: "$6,200", epc: "$2.21", status: "Paused", affiliateLink: "https://nordvpn.sjv.io/2y-deal" },
+    { name: "Skillshare Premium", clicks: 1900, conversions: 240, revenue: "$4,100", epc: "$2.16", status: "Active", affiliateLink: "https://skl.sh/premium-offer" },
+    { name: "Old Winter Campaign", clicks: 800, conversions: 95, revenue: "$1,500", epc: "$1.88", status: "Archived", affiliateLink: "https://amzn.to/winter23" },
+    { name: "New Tech Gadgets", clicks: 4500, conversions: 580, revenue: "$10,500", epc: "$2.33", status: "Active", affiliateLink: "https://example.com/tech-gadgets" },
 ];
 
 const chartConfig = {
@@ -178,13 +178,11 @@ const LinkPerformanceCards = () => (
                         <span className="text-muted-foreground">Conversions</span>
                         <span>{link.conversions.toLocaleString()}</span>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-muted-foreground">EPC</span>
-                        <span>{link.epc}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-muted-foreground">Revenue</span>
-                        <span>{link.revenue}</span>
+                    <div className="col-span-2">
+                        <div className="text-muted-foreground">Affiliate Link</div>
+                        <div className="truncate text-primary hover:underline">
+                            <a href={link.affiliateLink} target="_blank" rel="noopener noreferrer">{link.affiliateLink}</a>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
