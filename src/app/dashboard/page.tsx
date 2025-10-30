@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useAuth } from "@/providers/auth-provider";
@@ -24,6 +25,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { cn } from "@/lib/utils";
 
 const kpiData = [
   {
@@ -31,24 +33,28 @@ const kpiData = [
     value: "$45,231.89",
     change: "+20.1% from last month",
     icon: DollarSign,
+    positive: true,
   },
   {
     title: "Total Clicks",
     value: "1,235,632",
     change: "+180.1% from last month",
     icon: MousePointerClick,
+    positive: true,
   },
   {
     title: "Conversion Rate",
     value: "12.5%",
     change: "+19% from last month",
     icon: TrendingUp,
+    positive: true,
   },
   {
     title: "Active Campaigns",
     value: "23",
     change: "+2 since last month",
     icon: Zap,
+    positive: true,
   },
 ];
 
@@ -125,7 +131,14 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
-              <p className="text-xs text-muted-foreground">{kpi.change}</p>
+              <p
+                className={cn(
+                  "text-xs text-muted-foreground",
+                  kpi.positive ? "text-green-600" : "text-red-600"
+                )}
+              >
+                {kpi.change}
+              </p>
             </CardContent>
           </Card>
         ))}
