@@ -227,24 +227,22 @@ const LinkCards = ({ links }: { links: typeof linksData }) => (
                     <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                    <div className="text-muted-foreground">Clicks</div>
-                    <div>{link.clicks.toLocaleString()}</div>
+            <CardContent className="space-y-4 text-sm">
+                <div className="flex justify-between">
+                    <div className="flex flex-col">
+                        <span className="text-muted-foreground">Clicks</span>
+                        <span className="font-medium">{link.clicks.toLocaleString()}</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-muted-foreground">Conversions</span>
+                        <span className="font-medium">{link.conversions.toLocaleString()}</span>
+                    </div>
                 </div>
                 <div>
-                    <div className="text-muted-foreground">Conversions</div>
-                    <div>{link.conversions.toLocaleString()}</div>
-                </div>
-                <div className="col-span-2">
                     <div className="text-muted-foreground">Affiliate Link</div>
                     <div className="truncate text-primary hover:underline">
                         <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
                     </div>
-                </div>
-                <div className="col-span-2">
-                    <div className="text-muted-foreground">Created At</div>
-                    <div>{link.createdAt}</div>
                 </div>
             </CardContent>
              <CardFooter>
