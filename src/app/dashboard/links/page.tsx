@@ -58,7 +58,6 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   PlusCircle,
   MoreHorizontal,
@@ -289,19 +288,21 @@ const LinksTable = ({
             <TableRow>
                 {selectionMode && (
                   <TableHead padding="checkbox">
-                      <Checkbox
-                          checked={isAllSelected}
-                          onCheckedChange={(checked) => onSelectAll(Boolean(checked))}
-                          aria-label="Select all"
-                      />
+                    <div
+                      onClick={() => onSelectAll(!isAllSelected)}
+                      className="h-4 w-4 rounded-sm border border-primary flex items-center justify-center cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                      data-state={isAllSelected ? 'checked' : 'unchecked'}
+                      aria-label="Select all"
+                    >
+                      {isAllSelected && <Check className="h-4 w-4" />}
+                    </div>
                   </TableHead>
                 )}
                 <TableHead>Link Name</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Affiliate Link</TableHead>
                 <TableHead className="text-right">Clicks</TableHead>
                 <TableHead className="text-right">Conversions</TableHead>
-                <TableHead className="text-right">EPC</TableHead>
-                <TableHead className="text-right">Revenue</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead>
                 <span className="sr-only">Actions</span>
@@ -310,14 +311,24 @@ const LinksTable = ({
             </TableHeader>
             <TableBody>
             {links.map((link) => (
-                <TableRow key={link.id} data-state={selectedLinks.includes(link.id) && "selected"}>
+                <TableRow 
+                    key={link.id} 
+                    data-state={selectedLinks.includes(link.id) && "selected"}
+                    onClick={() => {
+                        if (selectionMode) {
+                            onSelectLink(link.id, !selectedLinks.includes(link.id));
+                        }
+                    }}
+                    className={selectionMode ? 'cursor-pointer' : ''}
+                >
                 {selectionMode && (
                   <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedLinks.includes(link.id)}
-                      onCheckedChange={(checked) => onSelectLink(link.id, Boolean(checked))}
-                      aria-label={`Select link ${link.name}`}
-                    />
+                      <div
+                        className="h-4 w-4 rounded-sm border border-primary flex items-center justify-center data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                        data-state={selectedLinks.includes(link.id) ? 'checked' : 'unchecked'}
+                      >
+                          {selectedLinks.includes(link.id) && <Check className="h-4 w-4" />}
+                      </div>
                   </TableCell>
                 )}
                 <TableCell className="font-medium">{link.name}</TableCell>
@@ -326,10 +337,13 @@ const LinksTable = ({
                     {link.status}
                     </Badge>
                 </TableCell>
+                <TableCell>
+                    <a href={link.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]">
+                        {link.link}
+                    </a>
+                </TableCell>
                 <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                <TableCell className="text-right">{link.epc}</TableCell>
-                <TableCell className="text-right">{link.revenue}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
                 <TableCell>
                     <LinkActions link={link} />
@@ -383,7 +397,7 @@ const LinkCards = ({
                         <span className="font-medium">{link.conversions.toLocaleString()}</span>
                     </div>
                 </div>
-                <div>
+                 <div>
                     <div className="text-muted-foreground">Affiliate Link</div>
                     <div className="truncate text-primary hover:underline">
                         <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
@@ -405,6 +419,13 @@ const AddLinkSchema = z.object({
 
 type AddLinkValues = z.infer<typeof AddLinkSchema>;
 
+const createShortLink = (longUrl: string): string => {
+    // In a real app, this would call a URL shortening service.
+    // For now, we'll simulate it.
+    const slug = Math.random().toString(36).substring(2, 8);
+    return `https://kika.site/${slug}`;
+};
+
 const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void }) => {
     const [open, setOpen] = React.useState(false);
     const { toast } = useToast();
@@ -418,10 +439,11 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
     });
 
     const onSubmit = (data: AddLinkValues) => {
+        const shortLink = createShortLink(data.url);
         const newLink = {
             id: `link${Date.now()}`,
             name: data.name,
-            link: data.url,
+            link: shortLink,
             status: "Active",
             clicks: 0,
             conversions: 0,
@@ -433,7 +455,17 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
         onLinkAdded(newLink);
         toast({
             title: "Link Created",
-            description: `The link "${data.name}" has been successfully created.`,
+            description: (
+                <div>
+                    <p>The link "{data.name}" has been created.</p>
+                    <p className="mt-2">
+                        Your short link is:{" "}
+                        <a href={shortLink} target="_blank" rel="noopener noreferrer" className="font-bold text-primary underline">
+                            {shortLink}
+                        </a>
+                    </p>
+                </div>
+            ),
         });
         form.reset();
         setOpen(false);
@@ -474,7 +506,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                             name="url"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Affiliate URL</FormLabel>
+                                    <FormLabel>Destination URL</FormLabel>
                                     <FormControl>
                                         <Input placeholder="https://..." {...field} />
                                     </FormControl>
@@ -712,5 +744,7 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
 
     
