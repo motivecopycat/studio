@@ -25,13 +25,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -69,7 +66,9 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  BarChart3,
+  Send,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -229,75 +228,58 @@ const getStatusVariant = (status: string) => {
 };
 
 const LinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
-    <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+    <Popover>
+        <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
             <MoreHorizontal className="h-4 w-4" />
         </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-48 p-2">
+        <div className="flex flex-col space-y-1">
+          <Button variant="ghost" className="w-full justify-start text-sm">
             <Copy className="mr-2 h-4 w-4" />
             Copy Link
-        </DropdownMenuItem>
-        <DropdownMenuItem>
+          </Button>
+          <Button variant="ghost" className="w-full justify-start text-sm">
             <Edit className="mr-2 h-4 w-4" />
             Edit
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        {link.status !== 'Paused' && (
-            <DropdownMenuItem>
+          </Button>
+          {link.status !== 'Paused' ? (
+             <Button variant="ghost" className="w-full justify-start text-sm">
                 <PauseCircle className="mr-2 h-4 w-4" />
                 Pause
-            </DropdownMenuItem>
-        )}
-        {link.status === 'Paused' && (
-            <DropdownMenuItem>
+            </Button>
+          ) : (
+            <Button variant="ghost" className="w-full justify-start text-sm">
                 <PlayCircle className="mr-2 h-4 w-4" />
                 Activate
-            </DropdownMenuItem>
-        )}
-        <DropdownMenuItem className="text-red-600">
+            </Button>
+          )}
+          <Link href="/dashboard/analytics" className="w-full">
+            <Button variant="ghost" className="w-full justify-start text-sm">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Analysis
+            </Button>
+          </Link>
+          <Button variant="ghost" className="w-full justify-start text-sm">
+            <Send className="mr-2 h-4 w-4" />
+            Share with Friends
+          </Button>
+          <Button variant="ghost" className="w-full justify-start text-sm text-red-600 hover:text-red-600">
             <Trash2 className="mr-2 h-4 w-4" />
             Archive
-        </DropdownMenuItem>
-        </DropdownMenuContent>
-    </DropdownMenu>
+          </Button>
+        </div>
+        </PopoverContent>
+    </Popover>
 );
 
-const LinksTable = ({ 
-    links,
-    selectedLinks,
-    onSelectAll,
-    onSelectLink,
-    selectionMode,
-}: { 
-    links: typeof linksData,
-    selectedLinks: string[],
-    onSelectAll: (checked: boolean) => void,
-    onSelectLink: (linkId: string, checked: boolean) => void,
-    selectionMode: boolean,
-}) => {
-    const isAllSelected = selectedLinks.length === links.length && links.length > 0;
-
+const LinksTable = ({ links }: { links: typeof linksData }) => {
     return (
         <Table>
             <TableHeader>
             <TableRow>
-                {selectionMode && (
-                  <TableHead padding="checkbox">
-                    <div
-                      onClick={() => onSelectAll(!isAllSelected)}
-                      className="h-4 w-4 rounded-sm border border-primary flex items-center justify-center cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                      data-state={isAllSelected ? 'checked' : 'unchecked'}
-                      aria-label="Select all"
-                    >
-                      {isAllSelected && <Check className="h-4 w-4" />}
-                    </div>
-                  </TableHead>
-                )}
                 <TableHead>Link Name</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Affiliate Link</TableHead>
@@ -311,26 +293,7 @@ const LinksTable = ({
             </TableHeader>
             <TableBody>
             {links.map((link) => (
-                <TableRow 
-                    key={link.id} 
-                    data-state={selectedLinks.includes(link.id) && "selected"}
-                    onClick={() => {
-                        if (selectionMode) {
-                            onSelectLink(link.id, !selectedLinks.includes(link.id));
-                        }
-                    }}
-                    className={selectionMode ? 'cursor-pointer' : ''}
-                >
-                {selectionMode && (
-                  <TableCell padding="checkbox">
-                      <div
-                        className="h-4 w-4 rounded-sm border border-primary flex items-center justify-center data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                        data-state={selectedLinks.includes(link.id) ? 'checked' : 'unchecked'}
-                      >
-                          {selectedLinks.includes(link.id) && <Check className="h-4 w-4" />}
-                      </div>
-                  </TableCell>
-                )}
+                <TableRow key={link.id}>
                 <TableCell className="font-medium">{link.name}</TableCell>
                 <TableCell>
                     <Badge variant={getStatusVariant(link.status)}>
@@ -577,14 +540,6 @@ export default function LinksPage() {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-
-    const handleSelectAll = (checked: boolean) => {
-        if (checked) {
-            setSelectedLinks(paginatedLinks.map(link => link.id));
-        } else {
-            setSelectedLinks([]);
-        }
-    };
     
     const handleSelectLink = (linkId: string, checked: boolean) => {
         if (checked) {
@@ -642,19 +597,19 @@ export default function LinksPage() {
                                 <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(false)}>
                                     Cancel
                                 </Button>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
+                                <Popover>
+                                    <PopoverTrigger asChild>
                                         <Button variant="outline" className="flex-1 sm:flex-initial" disabled={selectedLinks.length === 0}>
                                             Actions
                                             <ChevronDown className="ml-2 h-4 w-4" />
                                         </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem>Activate Selected</DropdownMenuItem>
-                                        <DropdownMenuItem>Pause Selected</DropdownMenuItem>
-                                        <DropdownMenuItem className="text-red-500">Archive Selected</DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-48 p-2">
+                                        <Button variant="ghost" className="w-full justify-start">Activate Selected</Button>
+                                        <Button variant="ghost" className="w-full justify-start">Pause Selected</Button>
+                                        <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-500">Archive Selected</Button>
+                                    </PopoverContent>
+                                </Popover>
                             </>
                         )}
                          <AddNewLinkDialog onLinkAdded={handleAddNewLink} />
@@ -679,14 +634,10 @@ export default function LinksPage() {
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
-                        selectedLinks={selectedLinks}
-                        onSelectAll={handleSelectAll}
-                        onSelectLink={handleSelectLink}
-                        selectionMode={selectionMode}
                     />}
             </CardContent>
             <CardFooter>
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full flex-wrap gap-4">
                     <div className="text-sm text-muted-foreground">
                         {selectedLinks.length > 0
                         ? `${selectedLinks.length} of ${paginatedLinks.length} selected`
@@ -744,7 +695,3 @@ export default function LinksPage() {
     </div>
   );
 }
-
-    
-
-    
