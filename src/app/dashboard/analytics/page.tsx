@@ -53,6 +53,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const kpiData = [
   {
@@ -115,11 +116,85 @@ const chartConfig = {
   conversions: { label: "Conversions", color: "hsl(var(--chart-3))" },
 };
 
+const LinkPerformanceTable = () => (
+    <Table>
+        <TableHeader>
+            <TableRow>
+            <TableHead>Link Name</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Clicks</TableHead>
+            <TableHead className="text-right">Conversions</TableHead>
+            <TableHead className="text-right">EPC</TableHead>
+            <TableHead className="text-right">Revenue</TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            {linkPerformanceData.map((link, index) => (
+            <TableRow key={index}>
+                <TableCell className="font-medium">{link.name}</TableCell>
+                <TableCell>
+                <Badge variant={
+                    link.status === "Active" ? "default" :
+                    link.status === "Paused" ? "secondary" : "outline"
+                }>
+                    {link.status}
+                </Badge>
+                </TableCell>
+                <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
+                <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
+                <TableCell className="text-right">{link.epc}</TableCell>
+                <TableCell className="text-right">{link.revenue}</TableCell>
+            </TableRow>
+            ))}
+        </TableBody>
+    </Table>
+);
+
+const LinkPerformanceCards = () => (
+    <div className="space-y-4">
+        {linkPerformanceData.map((link, index) => (
+            <Card key={index}>
+                <CardHeader>
+                    <CardTitle className="flex justify-between items-center text-lg">
+                        <span>{link.name}</span>
+                        <Badge variant={
+                            link.status === "Active" ? "default" :
+                            link.status === "Paused" ? "secondary" : "outline"
+                        }>
+                            {link.status}
+                        </Badge>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex flex-col">
+                        <span className="text-muted-foreground">Clicks</span>
+                        <span>{link.clicks.toLocaleString()}</span>
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-muted-foreground">Conversions</span>
+                        <span>{link.conversions.toLocaleString()}</span>
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-muted-foreground">EPC</span>
+                        <span>{link.epc}</span>
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-muted-foreground">Revenue</span>
+                        <span>{link.revenue}</span>
+                    </div>
+                </CardContent>
+            </Card>
+        ))}
+    </div>
+);
+
+
 export default function AnalyticsPage() {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: addDays(new Date(), -6),
     to: new Date(),
   });
+  const isMobile = useIsMobile();
 
   return (
     <div className="space-y-6">
@@ -256,39 +331,11 @@ export default function AnalyticsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Link Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Clicks</TableHead>
-                <TableHead className="text-right">Conversions</TableHead>
-                <TableHead className="text-right">EPC</TableHead>
-                <TableHead className="text-right">Revenue</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {linkPerformanceData.map((link, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{link.name}</TableCell>
-                  <TableCell>
-                    <Badge variant={
-                        link.status === "Active" ? "default" :
-                        link.status === "Paused" ? "secondary" : "outline"
-                    }>
-                        {link.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{link.epc}</TableCell>
-                  <TableCell className="text-right">{link.revenue}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {isMobile ? <LinkPerformanceCards /> : <LinkPerformanceTable />}
         </CardContent>
       </Card>
     </div>
   );
 }
+
+    
