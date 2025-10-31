@@ -50,6 +50,7 @@ interface Integration {
     description: string;
     icon: React.ReactNode;
     connected: boolean;
+    isCustom?: boolean;
 }
 
 const initialIntegrations: Integration[] = [
@@ -235,6 +236,7 @@ export default function IntegrationsPage() {
           description: "Custom integration.",
           icon: <Package2 className="h-8 w-8" />,
           connected: true,
+          isCustom: true,
       };
 
       setIntegrations(prev => [...prev, newApp]);
@@ -246,6 +248,14 @@ export default function IntegrationsPage() {
       setNewAppName("");
       setNewAppApiKey("");
       setRequestDialogOpen(false);
+  };
+
+  const handleDeleteIntegration = (appName: string) => {
+    setIntegrations(prev => prev.filter(app => app.name !== appName));
+    toast({
+        title: "Integration Deleted",
+        description: `${appName} has been removed.`,
+    });
   };
 
 
@@ -333,7 +343,7 @@ export default function IntegrationsPage() {
                            <div className="space-y-1">
                                 <p className="font-medium">{apiKey.name}</p>
                                 <p className="text-sm text-muted-foreground font-mono">
-                                    {`${apiKey.key.substring(0, 11)}...${apiKey.key.substring(apiKey.key.length - 4)}`}
+                                    {`ks_...${apiKey.key.substring(apiKey.key.length - 4)}`}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                     Created on {apiKey.createdAt}
@@ -374,10 +384,31 @@ export default function IntegrationsPage() {
               <div className="rounded-lg bg-muted p-3 flex items-center justify-center">
                 {integration.icon}
               </div>
-              <div>
+              <div className="flex-1">
                 <CardTitle>{integration.name}</CardTitle>
                 <CardDescription className="mt-1">{integration.description}</CardDescription>
               </div>
+              {integration.isCustom && (
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete the "{integration.name}" integration. This action cannot be undone.
+                        </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteIntegration(integration.name)}>Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+              )}
             </CardHeader>
             <CardFooter className="mt-auto">
               {integration.connected ? (
@@ -469,6 +500,3 @@ export default function IntegrationsPage() {
     </div>
   );
 }
-
-    
-    
