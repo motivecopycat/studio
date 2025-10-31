@@ -400,7 +400,7 @@ export default function IntegrationsPage() {
                             value={requestReason}
                             onChange={(e) => setRequestReason(e.target.value)}
                             className="col-span-3"
-                            placeholder="Tell us why you need this integration."
+                            placeholder="Tell us why you need this integration (optional)."
                         />
                     </div>
                 </div>
@@ -414,3 +414,4 @@ export default function IntegrationsPage() {
   );
 }
  
+
