@@ -88,20 +88,16 @@ function PaymentForm() {
                                 <span>{plan} Plan ({cycle})</span>
                                 <span>₹{amount}</span>
                             </div>
-                            <div className="flex justify-between text-sm text-muted-foreground mt-2">
-                                <span>Tax (20%)</span>
-                                <span>₹{(amount * 0.2).toFixed(2)}</span>
-                            </div>
                             <div className="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                                 <span>Total</span>
-                                <span>₹{(amount * 1.2).toFixed(2)}</span>
+                                <span>₹{amount.toFixed(2)}</span>
                             </div>
                         </div>
                     )}
                 </CardContent>
                 <CardFooter>
                     <Button className="w-full" onClick={handlePayment}>
-                        {isUpdate ? "Update Card" : `Pay ₹${(amount * 1.2).toFixed(2)}`}
+                        {isUpdate ? "Update Card" : `Pay ₹${amount.toFixed(2)}`}
                     </Button>
                 </CardFooter>
             </Card>
