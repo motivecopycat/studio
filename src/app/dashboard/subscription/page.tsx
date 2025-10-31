@@ -23,6 +23,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+
 
 const plans = [
   {
@@ -105,6 +118,14 @@ export default function SubscriptionPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">(
     "monthly"
   );
+  const { toast } = useToast();
+
+  const handleCancelSubscription = () => {
+    toast({
+        title: "Subscription Cancelled",
+        description: "Your subscription has been successfully cancelled.",
+    });
+  }
 
   return (
     <div className="space-y-8">
@@ -193,7 +214,25 @@ export default function SubscriptionPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
             <Button variant="outline" className="w-full">Update Payment Method</Button>
-            <Button variant="destructive" className="w-full">Cancel Subscription</Button>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full">Cancel Subscription</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action will cancel your subscription. You will lose access to Pro features at the end of your billing period.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Go Back</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleCancelSubscription}>
+                            Confirm Cancellation
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
           </CardFooter>
         </Card>
 
