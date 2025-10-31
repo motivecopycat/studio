@@ -61,8 +61,7 @@ const initialIntegrations: Integration[] = [
   },
   {
     name: "Slack",
-    description:
-      "Receive real-time notifications for important events, like new conversions or campaign milestones.",
+    description: "",
     icon: <MessageSquare className="h-8 w-8" />,
     connected: true,
   },
@@ -75,8 +74,7 @@ const initialIntegrations: Integration[] = [
   },
   {
     name: "Zapier",
-    description:
-      "Connect KikaSite to thousands of other apps with Zapier. Automate workflows and move data seamlessly.",
+    description: "",
     icon: <Webhook className="h-8 w-8" />,
     connected: false,
   },
@@ -479,7 +477,3 @@ export default function IntegrationsPage() {
     </div>
   );
 }
-
-    
-    
-    
