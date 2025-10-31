@@ -157,11 +157,11 @@ export default function SubscriptionPage() {
         </Label>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-wrap justify-center gap-6">
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`flex flex-col ${
+            className={`flex flex-col w-full md:w-[320px] ${
               plan.current ? "border-primary" : ""
             }`}
           >
