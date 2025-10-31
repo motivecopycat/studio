@@ -69,8 +69,7 @@ const initialIntegrations = [
   },
   {
     name: "Zapier",
-    description:
-      "Connect KikaSite to thousands of other apps with Zapier. Automate workflows and move data seamlessly.",
+    description: "",
     icon: <Webhook className="h-8 w-8" />,
     connected: false,
   },
@@ -416,3 +415,5 @@ export default function IntegrationsPage() {
   );
 }
  
+
+    
