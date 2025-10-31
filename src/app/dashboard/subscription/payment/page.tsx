@@ -11,11 +11,18 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
+import { Icons } from "@/components/icons";
 
 const plans: any = {
   Pro: {
@@ -37,11 +44,11 @@ function PaymentForm() {
     const cycle = isUpdate ? 'monthly' : searchParams.get("cycle") || "monthly";
     const amount = plans[plan] ? plans[plan][cycle] : 0;
 
-    const handlePayment = () => {
+    const handlePayment = (method: string) => {
         // In a real app, you would integrate a payment gateway like Stripe
         toast({
             title: isUpdate ? "Payment Method Updated" : "Payment Successful!",
-            description: isUpdate ? `Your payment details have been saved.` : `You have successfully subscribed to the ${plan} plan.`,
+            description: isUpdate ? `Your payment details have been saved.` : `You have successfully subscribed to the ${plan} plan using ${method}.`,
         });
         router.push("/dashboard/subscription");
     };
@@ -65,25 +72,51 @@ function PaymentForm() {
             <Card>
                 <CardHeader>
                     <CardTitle>Payment Details</CardTitle>
-                    <CardDescription>Enter your card information to complete the purchase.</CardDescription>
+                    <CardDescription>Choose a payment method to complete the purchase.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                     <div className="space-y-2">
-                        <Label htmlFor="card-number">Card Number</Label>
-                        <Input id="card-number" placeholder="0000 0000 0000 0000" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="expiry">Expiry Date</Label>
-                            <Input id="expiry" placeholder="MM / YY" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="cvc">CVC</Label>
-                            <Input id="cvc" placeholder="CVC" />
-                        </div>
-                    </div>
+                <CardContent>
+                    <Tabs defaultValue="card" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                            <TabsTrigger value="card">Credit/Debit Card</TabsTrigger>
+                            <TabsTrigger value="upi">UPI</TabsTrigger>
+                            <TabsTrigger value="gpay">Google Pay</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="card" className="pt-6">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="card-number">Card Number</Label>
+                                    <Input id="card-number" placeholder="0000 0000 0000 0000" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="expiry">Expiry Date</Label>
+                                        <Input id="expiry" placeholder="MM / YY" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="cvc">CVC</Label>
+                                        <Input id="cvc" placeholder="CVC" />
+                                    </div>
+                                </div>
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="upi" className="pt-6">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="upi-id">UPI ID</Label>
+                                    <Input id="upi-id" placeholder="yourname@bank" />
+                                </div>
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="gpay" className="pt-6 flex justify-center">
+                           <Button variant="outline" className="h-14 text-lg" onClick={() => handlePayment('Google Pay')}>
+                             <Icons.google className="mr-2 h-6 w-6" />
+                             Pay with Google Pay
+                           </Button>
+                        </TabsContent>
+                    </Tabs>
+
                     {!isUpdate && (
-                        <div className="rounded-lg bg-muted p-4">
+                        <div className="rounded-lg bg-muted p-4 mt-6">
                             <div className="flex justify-between font-semibold">
                                 <span>{plan} Plan ({cycle})</span>
                                 <span>₹{amount}</span>
@@ -96,9 +129,18 @@ function PaymentForm() {
                     )}
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full" onClick={handlePayment}>
-                        {isUpdate ? "Update Card" : `Pay ₹${amount.toFixed(2)}`}
-                    </Button>
+                     <Tabs defaultValue="card" className="w-full">
+                        <TabsContent value="card">
+                           <Button className="w-full" onClick={() => handlePayment('Card')}>
+                                {isUpdate ? "Update Card" : `Pay ₹${amount.toFixed(2)}`}
+                            </Button>
+                        </TabsContent>
+                         <TabsContent value="upi">
+                           <Button className="w-full" onClick={() => handlePayment('UPI')}>
+                                {isUpdate ? "Update UPI" : `Pay ₹${amount.toFixed(2)} with UPI`}
+                            </Button>
+                        </TabsContent>
+                     </Tabs>
                 </CardFooter>
             </Card>
         </div>
