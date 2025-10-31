@@ -41,11 +41,18 @@ import {
   Webhook,
   Copy,
   Trash2,
+  Package2,
 } from "lucide-react";
 import * as React from "react";
-import { Textarea } from "@/components/ui/textarea";
 
-const initialIntegrations = [
+interface Integration {
+    name: string;
+    description: string;
+    icon: React.ReactNode;
+    connected: boolean;
+}
+
+const initialIntegrations: Integration[] = [
   {
     name: "Google Analytics",
     description: "Sync your affiliate link data with Google Analytics for deeper insights into traffic and user behavior.",
@@ -143,10 +150,10 @@ export default function IntegrationsPage() {
   const [isCreateDialogOpen, setCreateDialogOpen] = React.useState(false);
   const { toast } = useToast();
 
-  const [integrations, setIntegrations] = React.useState(initialIntegrations);
+  const [integrations, setIntegrations] = React.useState<Integration[]>(initialIntegrations);
   const [isRequestDialogOpen, setRequestDialogOpen] = React.useState(false);
-  const [requestedAppName, setRequestedAppName] = React.useState("");
-  const [requestReason, setRequestReason] = React.useState("");
+  const [newAppName, setNewAppName] = React.useState("");
+  const [newAppApiKey, setNewAppApiKey] = React.useState("");
 
 
   const handleCreateKey = () => {
@@ -213,7 +220,6 @@ export default function IntegrationsPage() {
     toast({
       title: "App Disconnected",
       description: `${appName} has been disconnected.`,
-      variant: "destructive"
     });
   };
 
@@ -224,21 +230,31 @@ export default function IntegrationsPage() {
     });
   };
 
-  const handleRequestSubmit = () => {
-      if (!requestedAppName.trim()) {
+  const handleAddAppSubmit = () => {
+      if (!newAppName.trim() || !newAppApiKey.trim()) {
           toast({
               variant: "destructive",
               title: "Error",
-              description: "Please enter the name of the app.",
+              description: "Please enter both an app name and an API key.",
           });
           return;
       }
+      
+      const newApp: Integration = {
+          name: newAppName,
+          description: "Custom integration.",
+          icon: <Package2 className="h-8 w-8" />,
+          connected: true,
+      };
+
+      setIntegrations(prev => [...prev, newApp]);
+
       toast({
-          title: "Request Submitted",
-          description: `Thanks for suggesting ${requestedAppName}! We'll look into it.`,
+          title: "App Added",
+          description: `${newAppName} has been added and connected.`,
       });
-      setRequestedAppName("");
-      setRequestReason("");
+      setNewAppName("");
+      setNewAppApiKey("");
       setRequestDialogOpen(false);
   };
 
@@ -370,33 +386,30 @@ export default function IntegrationsPage() {
               </div>
               <div>
                 <CardTitle>{integration.name}</CardTitle>
+                <CardDescription className="mt-1">{integration.description}</CardDescription>
               </div>
             </CardHeader>
             <CardFooter className="mt-auto">
               {integration.connected ? (
                 <div className="w-full flex gap-2">
                     <Button variant="secondary" className="w-full" onClick={() => handleManage(integration.name)}>Manage</Button>
-                    {integration.name === "Slack" ? (
-                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="outline" className="w-full">Disconnect</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Disconnect {integration.name}?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        Are you sure you want to disconnect {integration.name}? Your data will no longer be synced.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDisconnect(integration.name)}>Disconnect</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    ) : (
-                        <Button variant="destructive" className="w-full" onClick={() => handleDisconnect(integration.name)}>Disconnect</Button>
-                    )}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline" className="w-full">Disconnect</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Disconnect {integration.name}?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Are you sure you want to disconnect {integration.name}? Your data will no longer be synced.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDisconnect(integration.name)}>Disconnect</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
               ) : (
                 <ConnectAppDialog appName={integration.name} onConnect={(apiKey) => handleConnect(integration.name, apiKey)}>
@@ -411,25 +424,25 @@ export default function IntegrationsPage() {
                 <CardHeader className="text-center">
                     <CardTitle className="flex items-center justify-center gap-2">
                     <PlusCircle className="h-6 w-6" />
-                    Suggest an App
+                    Add Custom App
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                     <p className="text-sm text-muted-foreground">
-                    Don't see the app you're looking for? Let us know!
+                    Can't find an app? Add your own custom integration.
                     </p>
                 </CardContent>
                 <CardFooter>
                     <DialogTrigger asChild>
-                        <Button variant="ghost">Request Integration</Button>
+                        <Button variant="ghost">Add App</Button>
                     </DialogTrigger>
                 </CardFooter>
             </Card>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Request an Integration</DialogTitle>
+                    <DialogTitle>Add Custom App</DialogTitle>
                     <DialogDescription>
-                        Tell us which app you'd like to see integrated next.
+                        Enter the details for your custom app integration.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -439,27 +452,27 @@ export default function IntegrationsPage() {
                         </Label>
                         <Input
                             id="app-name"
-                            value={requestedAppName}
-                            onChange={(e) => setRequestedAppName(e.target.value)}
+                            value={newAppName}
+                            onChange={(e) => setNewAppName(e.target.value)}
                             className="col-span-3"
-                            placeholder="e.g. Discord"
+                            placeholder="e.g. My Custom App"
                         />
                     </div>
-                     <div className="grid grid-cols-4 items-start gap-4">
-                        <Label htmlFor="reason" className="text-right pt-2">
-                            Reason
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="new-app-api-key" className="text-right">
+                            API Key
                         </Label>
-                        <Textarea
-                            id="reason"
-                            value={requestReason}
-                            onChange={(e) => setRequestReason(e.target.value)}
+                        <Input
+                            id="new-app-api-key"
+                            value={newAppApiKey}
+                            onChange={(e) => setNewAppApiKey(e.target.value)}
                             className="col-span-3"
-                            placeholder="Tell us why you need this integration (optional)."
+                            placeholder="Enter the API key"
                         />
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleRequestSubmit}>Submit Request</Button>
+                    <Button onClick={handleAddAppSubmit}>Add and Connect</Button>
                 </DialogFooter>
             </DialogContent>
          </Dialog>
@@ -467,3 +480,5 @@ export default function IntegrationsPage() {
     </div>
   );
 }
+
+    
