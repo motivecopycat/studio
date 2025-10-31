@@ -48,8 +48,7 @@ import { Textarea } from "@/components/ui/textarea";
 const initialIntegrations = [
   {
     name: "Google Analytics",
-    description:
-      "Sync your affiliate link data with Google Analytics for deeper insights into traffic and user behavior.",
+    description: "Sync your affiliate link data with Google Analytics for deeper insights into traffic and user behavior.",
     icon: <AreaChart className="h-8 w-8" />,
     connected: false,
   },
@@ -69,7 +68,8 @@ const initialIntegrations = [
   },
   {
     name: "Zapier",
-    description: "",
+    description:
+      "Connect KikaSite to thousands of other apps with Zapier. Automate workflows and move data seamlessly.",
     icon: <Webhook className="h-8 w-8" />,
     connected: false,
   },
@@ -370,9 +370,6 @@ export default function IntegrationsPage() {
               </div>
               <div>
                 <CardTitle>{integration.name}</CardTitle>
-                <CardDescription className="mt-1">
-                  {integration.description}
-                </CardDescription>
               </div>
             </CardHeader>
             <CardFooter className="mt-auto">
