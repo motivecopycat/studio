@@ -157,11 +157,11 @@ export default function SubscriptionPage() {
         </Label>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="flex overflow-x-auto gap-6 pb-4">
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`flex flex-col w-full md:w-[320px] ${
+            className={`flex flex-col w-[320px] shrink-0 ${
               plan.current ? "border-primary" : ""
             }`}
           >
