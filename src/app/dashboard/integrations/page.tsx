@@ -392,7 +392,6 @@ export default function IntegrationsPage() {
             <CardFooter className="mt-auto">
               {integration.connected ? (
                 <div className="w-full flex gap-2">
-                    <Button variant="secondary" className="w-full" onClick={() => handleManage(integration.name)}>Manage</Button>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button variant="outline" className="w-full">Disconnect</Button>
@@ -481,4 +480,5 @@ export default function IntegrationsPage() {
   );
 }
 
+    
     
