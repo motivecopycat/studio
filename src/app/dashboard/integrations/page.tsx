@@ -67,8 +67,7 @@ const initialIntegrations: Integration[] = [
   },
   {
     name: "Mailchimp",
-    description:
-      "Add contacts from your affiliate conversions directly to your Mailchimp mailing lists.",
+    description: "",
     icon: <Mail className="h-8 w-8" />,
     connected: false,
   },
@@ -218,13 +217,6 @@ export default function IntegrationsPage() {
     toast({
       title: "App Disconnected",
       description: `${appName} has been disconnected.`,
-    });
-  };
-
-  const handleManage = (appName: string) => {
-    toast({
-        title: `Managing ${appName}`,
-        description: `You are now managing your ${appName} integration.`,
     });
   };
 
