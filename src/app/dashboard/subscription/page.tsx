@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -195,9 +196,17 @@ export default function SubscriptionPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" disabled={plan.current}>
-                {plan.cta}
-              </Button>
+              {plan.cta === 'Upgrade' ? (
+                 <Link href={`/dashboard/subscription/payment?plan=${plan.name}&cycle=${billingCycle}`} className="w-full">
+                    <Button className="w-full" disabled={plan.current}>
+                        {plan.cta}
+                    </Button>
+                </Link>
+              ) : (
+                <Button className="w-full" disabled={plan.current}>
+                    {plan.cta}
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}
