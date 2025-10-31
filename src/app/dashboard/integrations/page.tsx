@@ -84,6 +84,58 @@ interface ApiKey {
 
 const generateApiKey = () => `ks_${crypto.randomUUID().replace(/-/g, '')}`;
 
+const ConnectAppDialog = ({ appName, onConnect, children }: { appName: string, onConnect: (apiKey: string) => void, children: React.ReactNode }) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [apiKey, setApiKey] = React.useState('');
+    const { toast } = useToast();
+
+    const handleSubmit = () => {
+        if (!apiKey.trim()) {
+            toast({
+                variant: "destructive",
+                title: "API Key Required",
+                description: "Please enter an API key to connect.",
+            });
+            return;
+        }
+        onConnect(apiKey);
+        setIsOpen(false);
+        setApiKey('');
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Connect to {appName}</DialogTitle>
+                    <DialogDescription>
+                        Please enter your API key for {appName} to establish a connection.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="api-key" className="text-right">
+                            API Key
+                        </Label>
+                        <Input
+                            id="api-key"
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            className="col-span-3"
+                            placeholder="Enter your API key"
+                        />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSubmit}>Connect</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
 export default function IntegrationsPage() {
   const [apiKeys, setApiKeys] = React.useState<ApiKey[]>([]);
   const [newKeyName, setNewKeyName] = React.useState("");
@@ -142,7 +194,9 @@ export default function IntegrationsPage() {
     setNewKeyName("");
   }
 
-  const handleConnect = (appName: string) => {
+  const handleConnect = (appName: string, apiKey: string) => {
+    // Here you would typically validate the API key
+    console.log(`Connecting ${appName} with key: ${apiKey}`);
     setIntegrations(integrations.map(app => 
       app.name === appName ? { ...app, connected: true } : app
     ));
@@ -348,7 +402,9 @@ export default function IntegrationsPage() {
                     )}
                 </div>
               ) : (
-                <Button variant="outline" className="w-full" onClick={() => handleConnect(integration.name)}>Connect</Button>
+                <ConnectAppDialog appName={integration.name} onConnect={(apiKey) => handleConnect(integration.name, apiKey)}>
+                    <Button variant="outline" className="w-full">Connect</Button>
+                </ConnectAppDialog>
               )}
             </CardFooter>
           </Card>
@@ -414,6 +470,3 @@ export default function IntegrationsPage() {
     </div>
   );
 }
- 
-
-    
