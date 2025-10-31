@@ -81,21 +81,21 @@ const billingHistory = [
   {
     date: "2024-05-01",
     plan: "Starter",
-    amount: "$0.00",
+    amount: "₹0.00",
     status: "Paid",
     invoiceId: "INV-20240501",
   },
   {
     date: "2024-04-01",
     plan: "Starter",
-    amount: "$0.00",
+    amount: "₹0.00",
     status: "Paid",
     invoiceId: "INV-20240401",
   },
   {
     date: "2024-03-01",
     plan: "Starter",
-    amount: "$0.00",
+    amount: "₹0.00",
     status: "Paid",
     invoiceId: "INV-20240301",
   },
@@ -146,7 +146,7 @@ export default function SubscriptionPage() {
                 {plan.price.monthly === null ? (
                   "Custom"
                 ) : (
-                  `$${
+                  `₹${
                     billingCycle === "monthly"
                       ? plan.price.monthly
                       : plan.price.annually
@@ -188,7 +188,7 @@ export default function SubscriptionPage() {
              </div>
              <div className="flex justify-between items-center">
                 <span>Price:</span>
-                <span className="font-semibold">$0.00/month</span>
+                <span className="font-semibold">₹0.00/month</span>
              </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
