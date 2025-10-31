@@ -55,7 +55,7 @@ interface Integration {
 const initialIntegrations: Integration[] = [
   {
     name: "Google Analytics",
-    description: "Sync your affiliate link data with Google Analytics for deeper insights into traffic and user behavior.",
+    description: "",
     icon: <AreaChart className="h-8 w-8" />,
     connected: false,
   },
@@ -480,5 +480,6 @@ export default function IntegrationsPage() {
   );
 }
 
+    
     
     
