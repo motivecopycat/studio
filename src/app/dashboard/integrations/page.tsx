@@ -384,7 +384,7 @@ export default function IntegrationsPage() {
                 <div className="w-full flex gap-2">
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="outline" className="w-full">Disconnect</Button>
+                            <Button variant="destructive" className="w-full">Disconnect</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
@@ -469,3 +469,5 @@ export default function IntegrationsPage() {
     </div>
   );
 }
+
+    
