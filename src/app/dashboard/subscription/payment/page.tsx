@@ -22,21 +22,26 @@ const plans: any = {
     monthly: 29,
     annually: 290,
   },
+  Starter: {
+      monthly: 0,
+      annually: 0,
+  }
 };
 
 function PaymentForm() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { toast } = useToast();
-    const plan = searchParams.get("plan") || "Pro";
-    const cycle = searchParams.get("cycle") || "monthly";
+    const isUpdate = searchParams.get("update") === 'true';
+    const plan = isUpdate ? 'Starter' : searchParams.get("plan") || "Pro";
+    const cycle = isUpdate ? 'monthly' : searchParams.get("cycle") || "monthly";
     const amount = plans[plan] ? plans[plan][cycle] : 0;
 
     const handlePayment = () => {
         // In a real app, you would integrate a payment gateway like Stripe
         toast({
-            title: "Payment Successful!",
-            description: `You have successfully subscribed to the ${plan} plan.`,
+            title: isUpdate ? "Payment Method Updated" : "Payment Successful!",
+            description: isUpdate ? `Your payment details have been saved.` : `You have successfully subscribed to the ${plan} plan.`,
         });
         router.push("/dashboard/subscription");
     };
@@ -48,9 +53,11 @@ function PaymentForm() {
                     <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Payment</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        {isUpdate ? "Update Payment Method" : "Payment"}
+                    </h1>
                     <p className="text-muted-foreground">
-                    Complete your subscription to the {plan} plan.
+                        {isUpdate ? "Update your saved card details." : `Complete your subscription to the ${plan} plan.`}
                     </p>
                 </div>
             </div>
@@ -75,23 +82,27 @@ function PaymentForm() {
                             <Input id="cvc" placeholder="CVC" />
                         </div>
                     </div>
-                     <div className="rounded-lg bg-muted p-4">
-                        <div className="flex justify-between font-semibold">
-                            <span>{plan} Plan ({cycle})</span>
-                            <span>₹{amount}</span>
+                    {!isUpdate && (
+                        <div className="rounded-lg bg-muted p-4">
+                            <div className="flex justify-between font-semibold">
+                                <span>{plan} Plan ({cycle})</span>
+                                <span>₹{amount}</span>
+                            </div>
+                            <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                                <span>Tax (20%)</span>
+                                <span>₹{(amount * 0.2).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
+                                <span>Total</span>
+                                <span>₹{(amount * 1.2).toFixed(2)}</span>
+                            </div>
                         </div>
-                        <div className="flex justify-between text-sm text-muted-foreground mt-2">
-                            <span>Tax (20%)</span>
-                            <span>₹{(amount * 0.2).toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
-                            <span>Total</span>
-                            <span>₹{(amount * 1.2).toFixed(2)}</span>
-                        </div>
-                    </div>
+                    )}
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full" onClick={handlePayment}>Pay ₹{(amount * 1.2).toFixed(2)}</Button>
+                    <Button className="w-full" onClick={handlePayment}>
+                        {isUpdate ? "Update Card" : `Pay ₹${(amount * 1.2).toFixed(2)}`}
+                    </Button>
                 </CardFooter>
             </Card>
         </div>

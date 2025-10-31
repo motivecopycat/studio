@@ -36,6 +36,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 
 const plans = [
@@ -120,6 +121,7 @@ export default function SubscriptionPage() {
     "monthly"
   );
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleCancelSubscription = () => {
     toast({
@@ -129,10 +131,7 @@ export default function SubscriptionPage() {
   }
 
   const handleUpdatePayment = () => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "We're working on making this feature available.",
-    });
+    router.push('/dashboard/subscription/payment?update=true');
   }
 
   return (
