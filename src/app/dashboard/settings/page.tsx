@@ -34,6 +34,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User as UserIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 const profileFormSchema = z.object({
   name: z
@@ -47,28 +48,80 @@ const profileFormSchema = z.object({
   email: z.string().email(),
 });
 
+const passwordFormSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required."),
+  newPassword: z.string().min(8, "New password must be at least 8 characters."),
+  confirmPassword: z.string(),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
+});
+
+
+const notificationsFormSchema = z.object({
+    communication_emails: z.boolean().default(false).optional(),
+    marketing_emails: z.boolean().default(false).optional(),
+    social_emails: z.boolean().default(false).optional(),
+    security_emails: z.boolean().default(true),
+});
+
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
 
 export default function SettingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const defaultValues: Partial<ProfileFormValues> = {
-    name: user?.displayName || "",
-    email: user?.email || "",
-  };
-
-  const form = useForm<ProfileFormValues>({
+  const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: {
+      name: user?.displayName || "",
+      email: user?.email || "",
+    },
     mode: "onChange",
   });
 
-  function onSubmit(data: ProfileFormValues) {
+  const passwordForm = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordFormSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    }
+  });
+
+  const notificationsForm = useForm<NotificationsFormValues>({
+    resolver: zodResolver(notificationsFormSchema),
+    defaultValues: {
+      communication_emails: false,
+      marketing_emails: true,
+      social_emails: true,
+      security_emails: true,
+    },
+  });
+
+
+  function onProfileSubmit(data: ProfileFormValues) {
     toast({
       title: "Profile Updated",
       description: "Your profile information has been saved.",
     });
+  }
+
+  function onPasswordSubmit(data: PasswordFormValues) {
+    toast({
+      title: "Password Updated",
+      description: "Your password has been changed. You will be logged out.",
+    });
+    // In a real app, you'd call a logout function here after a short delay
+  }
+
+  function onNotificationsSubmit(data: NotificationsFormValues) {
+    toast({
+      title: "Notifications Updated",
+      description: "Your notification preferences have been saved.",
+    })
   }
 
   const getInitials = (name: string | null) => {
@@ -105,9 +158,9 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Form {...form}>
+              <Form {...profileForm}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={profileForm.handleSubmit(onProfileSubmit)}
                   className="space-y-8"
                 >
                   <div className="flex items-center gap-4">
@@ -129,7 +182,7 @@ export default function SettingsPage() {
                   </div>
 
                   <FormField
-                    control={form.control}
+                    control={profileForm.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
@@ -146,7 +199,7 @@ export default function SettingsPage() {
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={profileForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
@@ -176,17 +229,51 @@ export default function SettingsPage() {
                         Change your password here. After saving, you'll be logged out.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-                        <div className="flex flex-col items-center gap-1 text-center">
-                            <h3 className="text-xl font-bold tracking-tight">
-                            Coming Soon
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                            Password management will be available in a future update.
-                            </p>
-                        </div>
-                    </div>
+                <CardContent className="space-y-4">
+                  <Form {...passwordForm}>
+                    <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
+                      <FormField
+                          control={passwordForm.control}
+                          name="currentPassword"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>Current Password</FormLabel>
+                                  <FormControl>
+                                      <Input type="password" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <FormField
+                          control={passwordForm.control}
+                          name="newPassword"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>New Password</FormLabel>
+                                  <FormControl>
+                                      <Input type="password" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <FormField
+                          control={passwordForm.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>Confirm New Password</FormLabel>
+                                  <FormControl>
+                                      <Input type="password" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <Button type="submit">Update password</Button>
+                    </form>
+                  </Form>
                 </CardContent>
             </Card>
         </TabsContent>
@@ -198,17 +285,107 @@ export default function SettingsPage() {
                         Configure how you receive notifications.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-                        <div className="flex flex-col items-center gap-1 text-center">
-                            <h3 className="text-xl font-bold tracking-tight">
-                            Coming Soon
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                            Notification preferences will be available in a future update.
-                            </p>
+                <CardContent className="space-y-6">
+                  <Form {...notificationsForm}>
+                      <form onSubmit={notificationsForm.handleSubmit(onNotificationsSubmit)} className="space-y-8">
+                        <div>
+                          <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+                          <div className="space-y-4">
+                            <FormField
+                              control={notificationsForm.control}
+                              name="communication_emails"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">
+                                      Communication emails
+                                    </FormLabel>
+                                    <FormDescription>
+                                      Receive emails about your account activity.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={notificationsForm.control}
+                              name="marketing_emails"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">
+                                      Marketing emails
+                                    </FormLabel>
+                                    <FormDescription>
+                                      Receive emails about new products, features, and special offers.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                             <FormField
+                              control={notificationsForm.control}
+                              name="social_emails"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">
+                                      Social emails
+                                    </FormLabel>
+                                    <FormDescription>
+                                      Receive emails for friend requests, follows, and other social interactions.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={notificationsForm.control}
+                              name="security_emails"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">
+                                      Security emails
+                                    </FormLabel>
+                                    <FormDescription>
+                                      Receive emails about your account security.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                      disabled
+                                      aria-readonly
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </div>
-                    </div>
+                        <Button type="submit">Update notifications</Button>
+                      </form>
+                    </Form>
                 </CardContent>
             </Card>
         </TabsContent>
