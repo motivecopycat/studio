@@ -127,6 +127,13 @@ export default function SubscriptionPage() {
     });
   }
 
+  const handleUpdatePayment = () => {
+    toast({
+      title: "Feature Coming Soon",
+      description: "We're working on making this feature available.",
+    });
+  }
+
   return (
     <div className="space-y-8">
       <div>
@@ -213,7 +220,7 @@ export default function SubscriptionPage() {
              </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
-            <Button variant="outline" className="w-full">Update Payment Method</Button>
+            <Button variant="outline" className="w-full" onClick={handleUpdatePayment}>Update Payment Method</Button>
             <AlertDialog>
                 <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full">Cancel Subscription</Button>
