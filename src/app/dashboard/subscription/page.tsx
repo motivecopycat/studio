@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 const plans = [
@@ -116,12 +117,71 @@ const billingHistory = [
   },
 ];
 
+const BillingHistoryTable = () => (
+    <Table>
+        <TableHeader>
+        <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Plan</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Invoice</TableHead>
+        </TableRow>
+        </TableHeader>
+        <TableBody>
+        {billingHistory.map((invoice) => (
+            <TableRow key={invoice.invoiceId}>
+            <TableCell>{invoice.date}</TableCell>
+            <TableCell>{invoice.plan}</TableCell>
+            <TableCell>{invoice.amount}</TableCell>
+            <TableCell>
+                <Badge variant={invoice.status === 'Paid' ? 'default' : 'destructive'}>
+                {invoice.status}
+                </Badge>
+            </TableCell>
+            <TableCell className="text-right">
+                <Button variant="ghost" size="icon">
+                <Download className="h-4 w-4" />
+                </Button>
+            </TableCell>
+            </TableRow>
+        ))}
+        </TableBody>
+    </Table>
+);
+
+const BillingHistoryCards = () => (
+    <div className="space-y-4">
+        {billingHistory.map((invoice) => (
+            <Card key={invoice.invoiceId}>
+                <CardHeader className="flex flex-row justify-between items-start pb-2">
+                    <div>
+                        <CardTitle className="text-sm font-medium">{invoice.plan} Plan</CardTitle>
+                        <CardDescription>{invoice.date}</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon">
+                        <Download className="h-4 w-4" />
+                    </Button>
+                </CardHeader>
+                <CardContent className="flex justify-between items-center">
+                    <div className="text-lg font-semibold">{invoice.amount}</div>
+                    <Badge variant={invoice.status === 'Paid' ? 'default' : 'destructive'}>
+                        {invoice.status}
+                    </Badge>
+                </CardContent>
+            </Card>
+        ))}
+    </div>
+);
+
+
 export default function SubscriptionPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">(
     "monthly"
   );
   const { toast } = useToast();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   const handleCancelSubscription = () => {
     toast({
@@ -157,11 +217,11 @@ export default function SubscriptionPage() {
         </Label>
       </div>
 
-      <div className="flex overflow-x-auto gap-6 pb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`flex flex-col w-[320px] shrink-0 ${
+            className={`flex flex-col ${
               plan.current ? "border-primary" : ""
             }`}
           >
@@ -259,39 +319,12 @@ export default function SubscriptionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Invoice</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {billingHistory.map((invoice) => (
-                  <TableRow key={invoice.invoiceId}>
-                    <TableCell>{invoice.date}</TableCell>
-                    <TableCell>{invoice.plan}</TableCell>
-                    <TableCell>{invoice.amount}</TableCell>
-                    <TableCell>
-                      <Badge variant={invoice.status === 'Paid' ? 'default' : 'destructive'}>
-                        {invoice.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {isMobile ? <BillingHistoryCards /> : <BillingHistoryTable />}
           </CardContent>
         </Card>
       </div>
     </div>
   );
 }
+
+    
