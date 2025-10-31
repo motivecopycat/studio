@@ -43,8 +43,9 @@ import {
   Trash2,
 } from "lucide-react";
 import * as React from "react";
+import { Textarea } from "@/components/ui/textarea";
 
-const integrations = [
+const initialIntegrations = [
   {
     name: "Google Analytics",
     description:
@@ -91,6 +92,12 @@ export default function IntegrationsPage() {
   const [isCreateDialogOpen, setCreateDialogOpen] = React.useState(false);
   const { toast } = useToast();
 
+  const [integrations, setIntegrations] = React.useState(initialIntegrations);
+  const [isRequestDialogOpen, setRequestDialogOpen] = React.useState(false);
+  const [requestedAppName, setRequestedAppName] = React.useState("");
+  const [requestReason, setRequestReason] = React.useState("");
+
+
   const handleCreateKey = () => {
     if (!newKeyName.trim()) {
         toast({
@@ -135,6 +142,52 @@ export default function IntegrationsPage() {
     setGeneratedKey(null);
     setNewKeyName("");
   }
+
+  const handleConnect = (appName: string) => {
+    setIntegrations(integrations.map(app => 
+      app.name === appName ? { ...app, connected: true } : app
+    ));
+    toast({
+      title: "App Connected",
+      description: `${appName} has been successfully connected.`,
+    });
+  };
+
+  const handleDisconnect = (appName: string) => {
+    setIntegrations(integrations.map(app => 
+      app.name === appName ? { ...app, connected: false } : app
+    ));
+    toast({
+      title: "App Disconnected",
+      description: `${appName} has been disconnected.`,
+      variant: "destructive"
+    });
+  };
+
+  const handleManage = (appName: string) => {
+    toast({
+        title: `Managing ${appName}`,
+        description: `You are now managing your ${appName} integration.`,
+    });
+  };
+
+  const handleRequestSubmit = () => {
+      if (!requestedAppName.trim()) {
+          toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Please enter the name of the app.",
+          });
+          return;
+      }
+      toast({
+          title: "Request Submitted",
+          description: `Thanks for suggesting ${requestedAppName}! We'll look into it.`,
+      });
+      setRequestedAppName("");
+      setRequestReason("");
+      setRequestDialogOpen(false);
+  };
 
 
   return (
@@ -271,29 +324,91 @@ export default function IntegrationsPage() {
             </CardHeader>
             <CardFooter className="mt-auto">
               {integration.connected ? (
-                <Button variant="secondary" className="w-full">Manage</Button>
+                <div className="w-full flex gap-2">
+                    <Button variant="secondary" className="w-full" onClick={() => handleManage(integration.name)}>Manage</Button>
+                    {integration.name === "Slack" && (
+                         <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" className="w-full">Disconnect</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Disconnect {integration.name}?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to disconnect {integration.name}? Your data will no longer be synced.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDisconnect(integration.name)}>Disconnect</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                </div>
               ) : (
-                <Button variant="outline" className="w-full">Connect</Button>
+                <Button variant="outline" className="w-full" onClick={() => handleConnect(integration.name)}>Connect</Button>
               )}
             </CardFooter>
           </Card>
         ))}
-         <Card className="flex flex-col items-center justify-center border-2 border-dashed">
-          <CardHeader className="text-center">
-            <CardTitle className="flex items-center justify-center gap-2">
-              <PlusCircle className="h-6 w-6" />
-              Suggest an App
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Don't see the app you're looking for? Let us know!
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="ghost">Request Integration</Button>
-          </CardFooter>
-        </Card>
+         <Dialog open={isRequestDialogOpen} onOpenChange={setRequestDialogOpen}>
+            <Card className="flex flex-col items-center justify-center border-2 border-dashed">
+                <CardHeader className="text-center">
+                    <CardTitle className="flex items-center justify-center gap-2">
+                    <PlusCircle className="h-6 w-6" />
+                    Suggest an App
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                    <p className="text-sm text-muted-foreground">
+                    Don't see the app you're looking for? Let us know!
+                    </p>
+                </CardContent>
+                <CardFooter>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost">Request Integration</Button>
+                    </DialogTrigger>
+                </CardFooter>
+            </Card>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Request an Integration</DialogTitle>
+                    <DialogDescription>
+                        Tell us which app you'd like to see integrated next.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="app-name" className="text-right">
+                            App Name
+                        </Label>
+                        <Input
+                            id="app-name"
+                            value={requestedAppName}
+                            onChange={(e) => setRequestedAppName(e.target.value)}
+                            className="col-span-3"
+                            placeholder="e.g. Discord"
+                        />
+                    </div>
+                     <div className="grid grid-cols-4 items-start gap-4">
+                        <Label htmlFor="reason" className="text-right pt-2">
+                            Reason
+                        </Label>
+                        <Textarea
+                            id="reason"
+                            value={requestReason}
+                            onChange={(e) => setRequestReason(e.target.value)}
+                            className="col-span-3"
+                            placeholder="Tell us why you need this integration."
+                        />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleRequestSubmit}>Submit Request</Button>
+                </DialogFooter>
+            </DialogContent>
+         </Dialog>
       </div>
     </div>
   );
