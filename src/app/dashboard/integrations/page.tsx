@@ -326,10 +326,10 @@ export default function IntegrationsPage() {
               {integration.connected ? (
                 <div className="w-full flex gap-2">
                     <Button variant="secondary" className="w-full" onClick={() => handleManage(integration.name)}>Manage</Button>
-                    {integration.name === "Slack" && (
+                    {integration.name === "Slack" ? (
                          <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button variant="destructive" className="w-full">Disconnect</Button>
+                                <Button variant="outline" className="w-full">Disconnect</Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
@@ -344,6 +344,8 @@ export default function IntegrationsPage() {
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
+                    ) : (
+                        <Button variant="destructive" className="w-full" onClick={() => handleDisconnect(integration.name)}>Disconnect</Button>
                     )}
                 </div>
               ) : (
@@ -414,4 +416,3 @@ export default function IntegrationsPage() {
   );
 }
  
-
