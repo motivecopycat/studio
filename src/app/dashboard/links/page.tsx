@@ -3,6 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -90,6 +91,8 @@ const linksData = [
     epc: "$2.37",
     revenue: "$12,300",
     createdAt: "2024-05-01",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/summersale/400/225",
   },
   {
     id: "link2",
@@ -101,6 +104,8 @@ const linksData = [
     epc: "$2.82",
     revenue: "$8,750",
     createdAt: "2024-04-15",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/datascience/400/225",
   },
   {
     id: "link3",
@@ -112,6 +117,8 @@ const linksData = [
     epc: "$2.21",
     revenue: "$6,200",
     createdAt: "2024-03-20",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/nordvpn/400/225",
   },
   {
     id: "link4",
@@ -123,6 +130,8 @@ const linksData = [
     epc: "$2.16",
     revenue: "$4,100",
     createdAt: "2024-03-01",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/skillshare/400/225",
   },
   {
     id: "link5",
@@ -134,6 +143,8 @@ const linksData = [
     epc: "$1.88",
     revenue: "$1,500",
     createdAt: "2023-11-10",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/winter/400/225",
   },
   {
     id: "link6",
@@ -145,6 +156,8 @@ const linksData = [
     epc: "$2.33",
     revenue: "$10,500",
     createdAt: "2024-05-12",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/techgadgets/400/225",
   },
   {
     id: "link7",
@@ -156,6 +169,8 @@ const linksData = [
     epc: "$2.50",
     revenue: "$9,500",
     createdAt: "2024-05-05",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/fitnessapp/400/225",
   },
   {
     id: "link8",
@@ -167,6 +182,8 @@ const linksData = [
     epc: "$3.10",
     revenue: "$19,220",
     createdAt: "2024-05-20",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/mattress/400/225",
   },
   {
     id: "link9",
@@ -178,6 +195,8 @@ const linksData = [
     epc: "$2.90",
     revenue: "$4,350",
     createdAt: "2024-02-10",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/mealkit/400/225",
   },
   {
     id: "link10",
@@ -189,6 +208,8 @@ const linksData = [
     epc: "$2.75",
     revenue: "$19,525",
     createdAt: "2024-05-22",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/webhost/400/225",
   },
   {
     id: "link11",
@@ -200,6 +221,8 @@ const linksData = [
     epc: "$1.50",
     revenue: "$750",
     createdAt: "2023-10-01",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/ebook/400/225",
   },
   {
     id: "link12",
@@ -211,6 +234,8 @@ const linksData = [
     epc: "$3.50",
     revenue: "$34,300",
     createdAt: "2024-05-18",
+    category: "product",
+    imageUrl: "https://picsum.photos/seed/travel/400/225",
   },
 ];
 
@@ -353,6 +378,17 @@ const LinkCards = ({
                         }
                     }}
                 >
+                    {link.imageUrl && (
+                        <div className="aspect-[16/9] relative">
+                            <Image 
+                                src={link.imageUrl} 
+                                alt={link.name} 
+                                fill
+                                className="rounded-t-lg object-cover"
+                                data-ai-hint={`${link.category} image`}
+                            />
+                        </div>
+                    )}
                     <CardHeader className="flex flex-row items-start justify-between">
                         <div>
                             <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
@@ -437,6 +473,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
             revenue: "$0.00",
             createdAt: new Date().toISOString().split("T")[0],
             category: data.category,
+            imageUrl: `https://picsum.photos/seed/${data.name.replace(/\s+/g, '')}/400/225`,
         };
         onLinkAdded(newLink);
         toast({
@@ -766,4 +803,3 @@ export default function LinksPage() {
     </div>
   );
 }
-
