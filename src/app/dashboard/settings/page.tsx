@@ -4,6 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -104,6 +105,10 @@ export default function SettingsPage() {
       social_emails: true,
       security_emails: true,
     },
+  });
+
+  const handleNotificationsSubmit = notificationsForm.handleSubmit(data => {
+    onNotificationsSubmit(data);
   });
 
 
@@ -286,7 +291,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <Form {...notificationsForm}>
-                <form onSubmit={notificationsForm.handleSubmit(onNotificationsSubmit)} className="space-y-8">
+                <form onChange={handleNotificationsSubmit} className="space-y-8">
                   <div>
                     <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
                     <div className="space-y-4">
@@ -382,7 +387,6 @@ export default function SettingsPage() {
                       />
                     </div>
                   </div>
-                  <Button type="submit">Update notifications</Button>
                 </form>
               </Form>
           </CardContent>
