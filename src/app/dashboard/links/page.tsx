@@ -227,7 +227,7 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActions = ({ link, onCopy, onStatusChange, children }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, children: React.ReactNode }) => (
+const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, children: React.ReactNode }) => (
     <Popover>
         {children}
         <PopoverContent align="end" className="w-48 p-2">
@@ -261,7 +261,7 @@ const LinkActions = ({ link, onCopy, onStatusChange, children }: { link: (typeof
             <Send className="mr-2 h-4 w-4" />
             Share with Friends
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-sm text-red-600 hover:text-red-600">
+          <Button variant="ghost" className="w-full justify-start text-sm text-red-600 hover:text-red-600" onClick={() => onArchive(link.id)}>
             <Trash2 className="mr-2 h-4 w-4" />
             Archive
           </Button>
@@ -270,8 +270,8 @@ const LinkActions = ({ link, onCopy, onStatusChange, children }: { link: (typeof
     </Popover>
 );
 
-const DesktopLinkActions = ({ link, onCopy, onStatusChange }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void }) => (
-    <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange}>
+const DesktopLinkActions = ({ link, onCopy, onStatusChange, onArchive }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void }) => (
+    <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
@@ -281,7 +281,7 @@ const DesktopLinkActions = ({ link, onCopy, onStatusChange }: { link: (typeof li
     </LinkActions>
 );
 
-const LinksTable = ({ links, onCopy, onStatusChange }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void }) => {
+const LinksTable = ({ links, onCopy, onStatusChange, onArchive }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -315,7 +315,7 @@ const LinksTable = ({ links, onCopy, onStatusChange }: { links: typeof linksData
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
                 <TableCell>
-                    <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} />
+                    <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} />
                 </TableCell>
                 </TableRow>
             ))}
@@ -330,14 +330,16 @@ const LinkCards = ({
     onSelectLink,
     selectionMode,
     onCopy,
-    onStatusChange
+    onStatusChange,
+    onArchive
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
     onSelectLink: (linkId: string) => void,
     selectionMode: boolean,
     onCopy: (link: string) => void,
-    onStatusChange: (linkId: string, status: "Active" | "Paused") => void
+    onStatusChange: (linkId: string, status: "Active" | "Paused") => void,
+    onArchive: (linkId: string) => void
 }) => (
     <div className="space-y-4">
         {links.map((link) => {
@@ -385,7 +387,7 @@ const LinkCards = ({
             }
 
             return (
-                <LinkActions key={link.id} link={link} onCopy={onCopy} onStatusChange={onStatusChange}>
+                <LinkActions key={link.id} link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive}>
                     <PopoverTrigger asChild>{cardContent}</PopoverTrigger>
                 </LinkActions>
             );
@@ -569,6 +571,16 @@ export default function LinksPage() {
         });
     };
 
+    const handleArchiveLink = (linkId: string) => {
+        setAllLinks(prev => prev.map(link => 
+            link.id === linkId ? { ...link, status: 'Archived' } : link
+        ));
+        toast({
+            title: "Link Archived",
+            description: "The link has been archived.",
+        });
+    };
+
     const filteredLinks = allLinks.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
@@ -673,11 +685,13 @@ export default function LinksPage() {
                         selectionMode={selectionMode}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
+                        onArchive={handleArchiveLink}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
+                        onArchive={handleArchiveLink}
                     />}
             </CardContent>
             <CardFooter>
@@ -739,5 +753,3 @@ export default function LinksPage() {
     </div>
   );
 }
-
-    
