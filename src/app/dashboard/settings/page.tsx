@@ -110,9 +110,15 @@ export default function SettingsPage() {
     },
   });
 
-  const handleNotificationsSubmit = notificationsForm.handleSubmit(data => {
-    onNotificationsSubmit(data);
-  });
+  const { watch, handleSubmit } = notificationsForm;
+  const notificationValues = watch();
+
+  React.useEffect(() => {
+    const subscription = watch((values) => {
+        handleSubmit(onNotificationsSubmit)();
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, handleSubmit]);
 
 
   function onProfileSubmit(data: ProfileFormValues) {
@@ -274,7 +280,7 @@ export default function SettingsPage() {
                     <Card>
                         <CardContent className="p-4 space-y-4">
                             {loginHistory.map((session, index) => (
-                                <div key={index} className="flex items-center justify-between">
+                                <div key={session.id} className="flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <session.icon className="h-6 w-6 text-muted-foreground" />
                                         <div>
@@ -310,7 +316,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <Form {...notificationsForm}>
-                <form onChange={handleNotificationsSubmit} className="space-y-8">
+                <form className="space-y-8">
                   <div>
                     <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
                     <div className="space-y-4">
