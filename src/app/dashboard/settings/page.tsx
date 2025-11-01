@@ -274,7 +274,7 @@ export default function SettingsPage() {
                             ))}
                         </CardContent>
                     </Card>
-                    <Button variant="link" className="p-0 h-auto text-destructive">
+                    <Button variant="link" className="p-0 h-auto font-bold text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400">
                         Log out of all other sessions
                     </Button>
                 </div>
