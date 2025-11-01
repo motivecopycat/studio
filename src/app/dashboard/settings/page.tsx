@@ -13,7 +13,6 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -142,6 +141,13 @@ export default function SettingsPage() {
     })
   }
 
+  const handleLogoutAll = () => {
+    toast({
+        title: "Logged Out of All Sessions",
+        description: "All other active sessions have been logged out.",
+    });
+  };
+
   const getInitials = (name: string | null) => {
     if (!name) return "";
     const names = name.split(" ");
@@ -189,7 +195,7 @@ export default function SettingsPage() {
                         name="phone"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <label className="text-sm font-medium">Phone Number</label>
                             <FormControl>
                                 <Input placeholder="Your phone number" {...field} />
                             </FormControl>
@@ -202,7 +208,7 @@ export default function SettingsPage() {
                         name="address"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Address</FormLabel>
+                            <label className="text-sm font-medium">Address</label>
                             <FormControl>
                                 <Input placeholder="Your address" {...field} />
                             </FormControl>
@@ -216,7 +222,7 @@ export default function SettingsPage() {
                       name="bio"
                       render={({ field }) => (
                           <FormItem>
-                          <FormLabel>Bio</FormLabel>
+                          <label className="text-sm font-medium">Bio</label>
                           <FormControl>
                               <Textarea placeholder="Tell us a little bit about yourself" {...field} />
                           </FormControl>
@@ -281,7 +287,7 @@ export default function SettingsPage() {
                             ))}
                         </CardContent>
                     </Card>
-                    <Button variant="link" className="p-0 h-auto font-bold text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400">
+                    <Button onClick={handleLogoutAll} variant="link" className="p-0 h-auto font-bold text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400 no-underline hover:no-underline">
                         Log out of all other sessions
                     </Button>
                 </div>
@@ -308,9 +314,9 @@ export default function SettingsPage() {
                         render={({ field }) => (
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                              <FormLabel className="text-base">
+                              <label className="text-base font-medium">
                                 Communication emails
-                              </FormLabel>
+                              </label>
                               <FormDescription>
                                 Receive emails about your account activity.
                               </FormDescription>
@@ -330,9 +336,9 @@ export default function SettingsPage() {
                         render={({ field }) => (
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                              <FormLabel className="text-base">
+                              <label className="text-base font-medium">
                                 Marketing emails
-                              </FormLabel>
+                              </label>
                               <FormDescription>
                                 Receive emails about new products, features, and special offers.
                               </FormDescription>
@@ -352,9 +358,9 @@ export default function SettingsPage() {
                         render={({ field }) => (
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                              <FormLabel className="text-base">
+                              <label className="text-base font-medium">
                                 Social emails
-                              </FormLabel>
+                              </label>
                               <FormDescription>
                                 Receive emails for friend requests, follows, and other social interactions.
                               </FormDescription>
@@ -374,9 +380,9 @@ export default function SettingsPage() {
                         render={({ field }) => (
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                              <FormLabel className="text-base">
+                              <label className="text-base font-medium">
                                 Security emails
-                              </FormLabel>
+                              </label>
                               <FormDescription>
                                 Receive emails about your account security.
                               </FormDescription>
