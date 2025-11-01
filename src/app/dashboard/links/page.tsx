@@ -297,7 +297,7 @@ const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children, onLink
           </Link>
           <Button variant="ghost" className="w-full justify-start text-sm">
             <Send className="mr-2 h-4 w-4" />
-            Share with Friends
+            Share with friends (AI)
           </Button>
           <Button variant="ghost" className="w-full justify-start text-sm text-red-600 hover:text-red-600" onClick={() => onArchive(link.id)}>
             <Trash2 className="mr-2 h-4 w-4" />
