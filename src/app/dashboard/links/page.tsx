@@ -227,7 +227,7 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActions = ({ link, onCopy, children }: { link: (typeof linksData)[0], onCopy: (link: string) => void, children: React.ReactNode }) => (
+const LinkActions = ({ link, onCopy, onStatusChange, children }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, children: React.ReactNode }) => (
     <Popover>
         {children}
         <PopoverContent align="end" className="w-48 p-2">
@@ -241,12 +241,12 @@ const LinkActions = ({ link, onCopy, children }: { link: (typeof linksData)[0], 
             Edit
           </Button>
           {link.status !== 'Paused' ? (
-             <Button variant="ghost" className="w-full justify-start text-sm">
+             <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Paused')}>
                 <PauseCircle className="mr-2 h-4 w-4" />
                 Pause
             </Button>
           ) : (
-            <Button variant="ghost" className="w-full justify-start text-sm">
+            <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Active')}>
                 <PlayCircle className="mr-2 h-4 w-4" />
                 Activate
             </Button>
@@ -270,8 +270,8 @@ const LinkActions = ({ link, onCopy, children }: { link: (typeof linksData)[0], 
     </Popover>
 );
 
-const DesktopLinkActions = ({ link, onCopy }: { link: (typeof linksData)[0], onCopy: (link: string) => void }) => (
-    <LinkActions link={link} onCopy={onCopy}>
+const DesktopLinkActions = ({ link, onCopy, onStatusChange }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void }) => (
+    <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
@@ -281,7 +281,7 @@ const DesktopLinkActions = ({ link, onCopy }: { link: (typeof linksData)[0], onC
     </LinkActions>
 );
 
-const LinksTable = ({ links, onCopy }: { links: typeof linksData, onCopy: (link: string) => void }) => {
+const LinksTable = ({ links, onCopy, onStatusChange }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -315,7 +315,7 @@ const LinksTable = ({ links, onCopy }: { links: typeof linksData, onCopy: (link:
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
                 <TableCell>
-                    <DesktopLinkActions link={link} onCopy={onCopy} />
+                    <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} />
                 </TableCell>
                 </TableRow>
             ))}
@@ -330,12 +330,14 @@ const LinkCards = ({
     onSelectLink,
     selectionMode,
     onCopy,
+    onStatusChange
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
     onSelectLink: (linkId: string) => void,
     selectionMode: boolean,
     onCopy: (link: string) => void,
+    onStatusChange: (linkId: string, status: "Active" | "Paused") => void
 }) => (
     <div className="space-y-4">
         {links.map((link) => {
@@ -383,7 +385,7 @@ const LinkCards = ({
             }
 
             return (
-                <LinkActions key={link.id} link={link} onCopy={onCopy}>
+                <LinkActions key={link.id} link={link} onCopy={onCopy} onStatusChange={onStatusChange}>
                     <PopoverTrigger asChild>{cardContent}</PopoverTrigger>
                 </LinkActions>
             );
@@ -557,6 +559,16 @@ export default function LinksPage() {
         });
     };
 
+    const handleStatusChange = (linkId: string, status: 'Active' | 'Paused') => {
+        setAllLinks(prev => prev.map(link => 
+            link.id === linkId ? { ...link, status } : link
+        ));
+        toast({
+            title: "Link Updated",
+            description: `The link has been ${status.toLowerCase()}.`,
+        });
+    };
+
     const filteredLinks = allLinks.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
@@ -660,10 +672,12 @@ export default function LinksPage() {
                         onSelectLink={handleSelectLink}
                         selectionMode={selectionMode}
                         onCopy={handleCopyLink}
+                        onStatusChange={handleStatusChange}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
                         onCopy={handleCopyLink}
+                        onStatusChange={handleStatusChange}
                     />}
             </CardContent>
             <CardFooter>
