@@ -289,7 +289,7 @@ const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children, onLink
                 Activate
             </Button>
           )}
-          <Link href="/dashboard/analytics" className="w-full">
+          <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
             <Button variant="ghost" className="w-full justify-start text-sm">
               <BarChart3 className="mr-2 h-4 w-4" />
               Analysis
@@ -939,3 +939,5 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
