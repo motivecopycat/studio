@@ -42,6 +42,7 @@ import {
   Copy,
   Trash2,
   Package2,
+  Send,
 } from "lucide-react";
 import * as React from "react";
 
@@ -73,9 +74,9 @@ const initialIntegrations: Integration[] = [
     connected: false,
   },
   {
-    name: "Zapier",
+    name: "Telegram",
     description: "",
-    icon: <Webhook className="h-8 w-8" />,
+    icon: <Send className="h-8 w-8" />,
     connected: false,
   },
 ];
