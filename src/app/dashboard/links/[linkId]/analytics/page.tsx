@@ -132,21 +132,23 @@ export default function SingleLinkAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-grow">
-          <h1 className="text-3xl font-bold tracking-tight truncate" title={linkData.name}>
-            Analysis: {linkData.name}
-          </h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Badge variant={getStatusVariant(linkData.status)}>{linkData.status}</Badge>
-            <span className="flex items-center gap-1">
-                <Link2 className="h-3 w-3" />
-                {linkData.link}
-            </span>
-          </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4 flex-grow w-full">
+            <Button variant="outline" size="icon" onClick={() => router.back()} className="shrink-0">
+                <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div className="flex-grow">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate" title={linkData.name}>
+                    Analysis: {linkData.name}
+                </h1>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
+                    <Badge variant={getStatusVariant(linkData.status)}>{linkData.status}</Badge>
+                    <span className="flex items-center gap-1 truncate">
+                        <Link2 className="h-3 w-3" />
+                        <span className="truncate">{linkData.link}</span>
+                    </span>
+                </div>
+            </div>
         </div>
         <div className="w-full sm:w-auto">
           <Popover>
