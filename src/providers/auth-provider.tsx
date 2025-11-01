@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const guestUser: User = {
       uid: guestId,
       displayName: `Leenux Guest`,
-      email: null,
+      email: 'guest@kikasite.com',
       photoURL: PlaceHolderImages.find(img => img.id === 'guest-avatar')?.imageUrl || null,
       isGuest: true,
     };
