@@ -352,7 +352,7 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }:
                 <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
-                <TableCell>
+                <TableCell padding="checkbox">
                     <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} />
                 </TableCell>
                 </TableRow>
