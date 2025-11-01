@@ -74,23 +74,6 @@ const plans = [
     cta: "Upgrade",
     current: false,
   },
-  {
-    name: "Enterprise",
-    price: {
-      monthly: null,
-      annually: null,
-    },
-    description: "For large organizations",
-    features: [
-      "Everything in Pro",
-      "Dedicated account manager",
-      "Custom integrations",
-      "SAML/SSO",
-      "24/7 phone support",
-    ],
-    cta: "Contact Sales",
-    current: false,
-  },
 ];
 
 const billingHistory = [
@@ -217,7 +200,7 @@ export default function SubscriptionPage() {
         </Label>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {plans.map((plan) => (
           <Card
             key={plan.name}
@@ -326,5 +309,3 @@ export default function SubscriptionPage() {
     </div>
   );
 }
-
-    
