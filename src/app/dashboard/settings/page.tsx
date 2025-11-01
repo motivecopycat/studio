@@ -142,84 +142,11 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="space-y-6">
+      <Tabs defaultValue="password" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile</CardTitle>
-              <CardDescription>
-                This is how others will see you on the site.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...profileForm}>
-                <form
-                  onSubmit={profileForm.handleSubmit(onProfileSubmit)}
-                  className="space-y-8"
-                >
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-20 w-20">
-                      <AvatarImage
-                        src={user?.photoURL || ""}
-                        alt={user?.displayName || ""}
-                        data-ai-hint="user avatar"
-                      />
-                      <AvatarFallback>
-                        {user?.isGuest ? (
-                          <UserIcon className="h-8 w-8" />
-                        ) : (
-                          getInitials(user?.displayName)
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                    <Button variant="outline">Change photo</Button>
-                  </div>
-
-                  <FormField
-                    control={profileForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your name" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          This is the name that will be displayed on your
-                          profile and in emails.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={profileForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your email" {...field} readOnly />
-                        </FormControl>
-                        <FormDescription>
-                          Your email address is not editable.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit">Update profile</Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="password">
             <Card>
