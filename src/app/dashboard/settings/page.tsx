@@ -268,7 +268,7 @@ export default function SettingsPage() {
                                     {session.isCurrent ? (
                                         <span className="text-sm font-semibold text-green-600">Current Session</span>
                                     ) : (
-                                        <Button variant="link" className="p-0 h-auto text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400">Log out</Button>
+                                        <Button variant="link" className="p-0 h-auto font-bold text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400">Log out</Button>
                                     )}
                                 </div>
                             ))}
