@@ -58,8 +58,9 @@ const notificationsFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
 
-const loginHistory = [
+const initialLoginHistory = [
     {
+        id: "session1",
         device: "Mac - Apple iMac",
         icon: Laptop,
         location: "New York, USA",
@@ -67,6 +68,7 @@ const loginHistory = [
         isCurrent: true,
     },
     {
+        id: "session2",
         device: "iPhone - iPhone 14 Pro",
         icon: Smartphone,
         location: "London, UK",
@@ -74,6 +76,7 @@ const loginHistory = [
         isCurrent: false,
     },
     {
+        id: "session3",
         device: "Windows - Dell XPS",
         icon: Laptop,
         location: "San Francisco, USA",
@@ -85,6 +88,7 @@ const loginHistory = [
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
+  const [loginHistory, setLoginHistory] = React.useState(initialLoginHistory);
 
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -134,7 +138,8 @@ export default function SettingsPage() {
     logout();
   }
 
-  const handleSessionLogout = (device: string) => {
+  const handleSessionLogout = (sessionId: string, device: string) => {
+    setLoginHistory(prev => prev.filter(session => session.id !== sessionId));
     toast({
         title: "Session Logged Out",
         description: `The session on ${device} has been logged out.`,
@@ -142,6 +147,7 @@ export default function SettingsPage() {
   }
 
   const handleLogoutAll = () => {
+    setLoginHistory(prev => prev.filter(session => session.isCurrent));
     toast({
         title: "Logged Out of All Sessions",
         description: "All other active sessions have been logged out.",
@@ -281,7 +287,7 @@ export default function SettingsPage() {
                                     {session.isCurrent ? (
                                         <span className="text-sm font-semibold text-green-600">Current Session</span>
                                     ) : (
-                                        <Button onClick={() => handleSessionLogout(session.device)} variant="link" className="p-0 h-auto font-bold text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400 no-underline hover:no-underline">Log out</Button>
+                                        <Button onClick={() => handleSessionLogout(session.id, session.device)} variant="link" className="p-0 h-auto font-bold text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400 no-underline hover:no-underline">Log out</Button>
                                     )}
                                 </div>
                             ))}
