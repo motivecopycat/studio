@@ -85,6 +85,7 @@ const linksData = [
     id: "link1",
     name: "Amazon Summer Sale",
     link: "https://amzn.to/summer24",
+    destinationUrl: "https://amazon.com/",
     status: "Active",
     clicks: 5200,
     conversions: 650,
@@ -98,6 +99,7 @@ const linksData = [
     id: "link2",
     name: "Coursera Data Science",
     link: "https://coursera.pxf.io/ds-pro",
+    destinationUrl: "https://coursera.org/",
     status: "Active",
     clicks: 3100,
     conversions: 420,
@@ -111,6 +113,7 @@ const linksData = [
     id: "link3",
     name: "NordVPN 2-Year Plan",
     link: "https://nordvpn.sjv.io/2y-deal",
+    destinationUrl: "https://nordvpn.com/",
     status: "Paused",
     clicks: 2800,
     conversions: 350,
@@ -124,6 +127,7 @@ const linksData = [
     id: "link4",
     name: "Skillshare Premium",
     link: "https://skl.sh/premium-offer",
+    destinationUrl: "https://skillshare.com/",
     status: "Active",
     clicks: 1900,
     conversions: 240,
@@ -137,6 +141,7 @@ const linksData = [
     id: "link5",
     name: "Old Winter Campaign",
     link: "https://amzn.to/winter23",
+    destinationUrl: "https://picsum.photos/seed/winter/400/225",
     status: "Archived",
     clicks: 800,
     conversions: 95,
@@ -150,6 +155,7 @@ const linksData = [
     id: "link6",
     name: "New Tech Gadgets",
     link: "https://example.com/tech-gadgets",
+    destinationUrl: "https://example.com/",
     status: "Active",
     clicks: 4500,
     conversions: 580,
@@ -163,6 +169,7 @@ const linksData = [
     id: "link7",
     name: "Fitness App Subscription",
     link: "https://example.com/fitness-app",
+    destinationUrl: "https://example.com/",
     status: "Active",
     clicks: 3800,
     conversions: 490,
@@ -176,6 +183,7 @@ const linksData = [
     id: "link8",
     name: "Online Mattress Store",
     link: "https://example.com/mattress",
+    destinationUrl: "https://example.com/",
     status: "Active",
     clicks: 6200,
     conversions: 750,
@@ -189,6 +197,7 @@ const linksData = [
     id: "link9",
     name: "Meal Kit Delivery Service",
     link: "https://example.com/mealkit",
+    destinationUrl: "https://example.com/",
     status: "Paused",
     clicks: 1500,
     conversions: 180,
@@ -202,6 +211,7 @@ const linksData = [
     id: "link10",
     name: "Web Hosting Annual Plan",
     link: "https://example.com/webhost",
+    destinationUrl: "https://example.com/",
     status: "Active",
     clicks: 7100,
     conversions: 820,
@@ -215,6 +225,7 @@ const linksData = [
     id: "link11",
     name: "E-book on Productivity",
     link: "https://example.com/ebook",
+    destinationUrl: "https://example.com/",
     status: "Archived",
     clicks: 500,
     conversions: 60,
@@ -228,6 +239,7 @@ const linksData = [
     id: "link12",
     name: "Travel Booking Site",
     link: "https://example.com/travel",
+    destinationUrl: "https://example.com/",
     status: "Active",
     clicks: 9800,
     conversions: 1100,
@@ -238,7 +250,6 @@ const linksData = [
     imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
 ];
-
 const getStatusVariant = (status: string) => {
     switch (status) {
         case "Active":
@@ -252,7 +263,7 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, children: React.ReactNode }) => (
+const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, children: React.ReactNode, onLinkUpdated: (updatedLink: any) => void }) => (
     <Popover>
         {children}
         <PopoverContent align="end" className="w-48 p-2">
@@ -261,10 +272,12 @@ const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children }: { li
             <Copy className="mr-2 h-4 w-4" />
             Copy Link
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-sm">
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
+          <EditLinkDialog link={link} onLinkUpdated={onLinkUpdated}>
+            <Button variant="ghost" className="w-full justify-start text-sm">
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+            </Button>
+          </EditLinkDialog>
           {link.status !== 'Paused' ? (
              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Paused')}>
                 <PauseCircle className="mr-2 h-4 w-4" />
@@ -295,8 +308,8 @@ const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children }: { li
     </Popover>
 );
 
-const DesktopLinkActions = ({ link, onCopy, onStatusChange, onArchive }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void }) => (
-    <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive}>
+const DesktopLinkActions = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void }) => (
+    <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
@@ -306,7 +319,7 @@ const DesktopLinkActions = ({ link, onCopy, onStatusChange, onArchive }: { link:
     </LinkActions>
 );
 
-const LinksTable = ({ links, onCopy, onStatusChange, onArchive }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void }) => {
+const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -340,7 +353,7 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive }: { links: typeo
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
                 <TableCell>
-                    <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} />
+                    <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} />
                 </TableCell>
                 </TableRow>
             ))}
@@ -356,7 +369,8 @@ const LinkCards = ({
     selectionMode,
     onCopy,
     onStatusChange,
-    onArchive
+    onArchive,
+    onLinkUpdated
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
@@ -364,7 +378,8 @@ const LinkCards = ({
     selectionMode: boolean,
     onCopy: (link: string) => void,
     onStatusChange: (linkId: string, status: "Active" | "Paused") => void,
-    onArchive: (linkId: string) => void
+    onArchive: (linkId: string) => void,
+    onLinkUpdated: (updatedLink: any) => void
 }) => (
     <div className="space-y-4">
         {links.map((link) => {
@@ -423,7 +438,7 @@ const LinkCards = ({
             }
 
             return (
-                <LinkActions key={link.id} link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive}>
+                <LinkActions key={link.id} link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated}>
                     <PopoverTrigger asChild>{cardContent}</PopoverTrigger>
                 </LinkActions>
             );
@@ -466,6 +481,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
             id: `link${Date.now()}`,
             name: data.name,
             link: shortLink,
+            destinationUrl: data.url,
             status: "Active",
             clicks: 0,
             conversions: 0,
@@ -575,6 +591,118 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
     )
 }
 
+const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUpdated: (updatedLink: any) => void, children: React.ReactNode }) => {
+    const [open, setOpen] = React.useState(false);
+    const { toast } = useToast();
+
+    const form = useForm<AddLinkValues>({
+        resolver: zodResolver(AddLinkSchema),
+        defaultValues: {
+            name: link.name,
+            url: link.destinationUrl,
+            category: link.category,
+        },
+    });
+
+    const onSubmit = (data: AddLinkValues) => {
+        const isUrlChanged = data.url !== link.destinationUrl;
+        const shortLink = isUrlChanged ? createShortLink(data.url) : link.link;
+        const imageUrl = isUrlChanged 
+            ? `https://s.wordpress.com/mshots/v1/${encodeURIComponent(data.url)}?w=400&h=225`
+            : link.imageUrl;
+
+        const updatedLink = {
+            ...link,
+            name: data.name,
+            destinationUrl: data.url,
+            category: data.category,
+            link: shortLink,
+            imageUrl: imageUrl,
+        };
+        onLinkUpdated(updatedLink);
+        toast({
+            title: "Link Updated",
+            description: `The link "${data.name}" has been successfully updated.`,
+        });
+        setOpen(false);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Edit Link</DialogTitle>
+                    <DialogDescription>
+                        Update the details of your affiliate link.
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Link Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g. Amazon Summer Sale" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="url"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Destination URL</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="https://..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem className="space-y-3">
+                                <FormLabel>Category</FormLabel>
+                                <FormControl>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Button 
+                                            type="button" 
+                                            variant={field.value === 'product' ? 'default' : 'outline'}
+                                            onClick={() => field.onChange('product')}
+                                        >
+                                            Product
+                                        </Button>
+                                        <Button 
+                                            type="button" 
+                                            variant={field.value === 'movie' ? 'default' : 'outline'}
+                                            onClick={() => field.onChange('movie')}
+                                        >
+                                            Movie
+                                        </Button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <DialogFooter>
+                            <Button type="submit">Save Changes</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
 export default function LinksPage() {
     const isMobile = useIsMobile();
     const { toast } = useToast();
@@ -629,6 +757,12 @@ export default function LinksPage() {
             description: `${selectedLinks.length} link(s) have been ${status.toLowerCase()}.`,
         });
         setSelectionMode(false);
+    };
+
+    const handleLinkUpdated = (updatedLink: any) => {
+        setAllLinks(prev => prev.map(link => 
+            link.id === updatedLink.id ? updatedLink : link
+        ));
     };
 
     const filteredLinks = allLinks.filter(link => {
@@ -736,12 +870,14 @@ export default function LinksPage() {
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
+                        onLinkUpdated={handleLinkUpdated}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
+                        onLinkUpdated={handleLinkUpdated}
                     />}
             </CardContent>
             <CardFooter>
