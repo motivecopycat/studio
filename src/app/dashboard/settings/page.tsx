@@ -40,17 +40,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User as UserIcon, LogOut } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 const profileFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Name must not be longer than 30 characters.",
-    }),
-  email: z.string().email(),
+  phone: z.string().max(20, "Phone number is too long.").optional(),
+  address: z.string().max(100, "Address is too long.").optional(),
+  bio: z.string().max(200, "Bio must not be longer than 200 characters.").optional(),
 });
 
 const passwordFormSchema = z.object({
@@ -81,8 +76,9 @@ export default function SettingsPage() {
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: user?.displayName || "",
-      email: user?.email || "",
+      phone: "",
+      address: "",
+      bio: "",
     },
     mode: "onChange",
   });
@@ -165,7 +161,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
              <Form {...profileForm}>
-                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
+                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-8">
                     <div className="flex items-center gap-4">
                         <Avatar className="h-16 w-16">
                             <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
@@ -173,34 +169,55 @@ export default function SettingsPage() {
                             {user?.isGuest ? <UserIcon className="h-8 w-8" /> : getInitials(user?.displayName)}
                             </AvatarFallback>
                         </Avatar>
-                        <Button type="button" variant="outline">Change photo</Button>
+                         <div className="grid gap-1">
+                            <p className="font-semibold">{user?.displayName}</p>
+                            <p className="text-sm text-muted-foreground">{user?.email}</p>
+                        </div>
                     </div>
 
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <FormField
+                        control={profileForm.control}
+                        name="phone"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Your phone number" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField
+                        control={profileForm.control}
+                        name="address"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Address</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Your address" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                      />
+                    </div>
                     <FormField
-                    control={profileForm.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Your Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={profileForm.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Your Email" {...field} disabled />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                      control={profileForm.control}
+                      name="bio"
+                      render={({ field }) => (
+                          <FormItem>
+                          <FormLabel>Bio</FormLabel>
+                          <FormControl>
+                              <Textarea placeholder="Tell us a little bit about yourself" {...field} />
+                          </FormControl>
+                           <FormDescription>
+                              You can <span>@mention</span> other users and organizations.
+                          </FormDescription>
+                          <FormMessage />
+                          </FormItem>
+                      )}
                     />
                     <Button type="submit">Update profile</Button>
                 </form>
