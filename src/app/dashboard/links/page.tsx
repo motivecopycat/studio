@@ -227,12 +227,12 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActions = ({ link, children }: { link: (typeof linksData)[0], children: React.ReactNode }) => (
+const LinkActions = ({ link, onCopy, children }: { link: (typeof linksData)[0], onCopy: (link: string) => void, children: React.ReactNode }) => (
     <Popover>
         {children}
         <PopoverContent align="end" className="w-48 p-2">
         <div className="flex flex-col space-y-1">
-          <Button variant="ghost" className="w-full justify-start text-sm">
+          <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onCopy(link.link)}>
             <Copy className="mr-2 h-4 w-4" />
             Copy Link
           </Button>
@@ -270,8 +270,8 @@ const LinkActions = ({ link, children }: { link: (typeof linksData)[0], children
     </Popover>
 );
 
-const DesktopLinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
-    <LinkActions link={link}>
+const DesktopLinkActions = ({ link, onCopy }: { link: (typeof linksData)[0], onCopy: (link: string) => void }) => (
+    <LinkActions link={link} onCopy={onCopy}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
@@ -281,7 +281,7 @@ const DesktopLinkActions = ({ link }: { link: (typeof linksData)[0] }) => (
     </LinkActions>
 );
 
-const LinksTable = ({ links }: { links: typeof linksData }) => {
+const LinksTable = ({ links, onCopy }: { links: typeof linksData, onCopy: (link: string) => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -315,7 +315,7 @@ const LinksTable = ({ links }: { links: typeof linksData }) => {
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                 <TableCell>{link.createdAt}</TableCell>
                 <TableCell>
-                    <DesktopLinkActions link={link} />
+                    <DesktopLinkActions link={link} onCopy={onCopy} />
                 </TableCell>
                 </TableRow>
             ))}
@@ -329,11 +329,13 @@ const LinkCards = ({
     selectedLinks,
     onSelectLink,
     selectionMode,
+    onCopy,
 }: { 
     links: typeof linksData,
     selectedLinks: string[],
     onSelectLink: (linkId: string) => void,
     selectionMode: boolean,
+    onCopy: (link: string) => void,
 }) => (
     <div className="space-y-4">
         {links.map((link) => {
@@ -381,7 +383,7 @@ const LinkCards = ({
             }
 
             return (
-                <LinkActions key={link.id} link={link}>
+                <LinkActions key={link.id} link={link} onCopy={onCopy}>
                     <PopoverTrigger asChild>{cardContent}</PopoverTrigger>
                 </LinkActions>
             );
@@ -534,6 +536,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
 
 export default function LinksPage() {
     const isMobile = useIsMobile();
+    const { toast } = useToast();
     const [allLinks, setAllLinks] = React.useState(linksData);
     const [searchTerm, setSearchTerm] = React.useState("");
     const [statusFilter, setStatusFilter] = React.useState("all");
@@ -544,6 +547,14 @@ export default function LinksPage() {
 
     const handleAddNewLink = (newLink: any) => {
         setAllLinks([newLink, ...allLinks]);
+    };
+
+    const handleCopyLink = (link: string) => {
+        navigator.clipboard.writeText(link);
+        toast({
+            title: "Copied!",
+            description: "The affiliate link has been copied to your clipboard.",
+        });
     };
 
     const filteredLinks = allLinks.filter(link => {
@@ -648,9 +659,11 @@ export default function LinksPage() {
                         selectedLinks={selectedLinks}
                         onSelectLink={handleSelectLink}
                         selectionMode={selectionMode}
+                        onCopy={handleCopyLink}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
+                        onCopy={handleCopyLink}
                     />}
             </CardContent>
             <CardFooter>
@@ -712,3 +725,5 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
