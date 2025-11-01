@@ -92,7 +92,7 @@ const linksData = [
     revenue: "$12,300",
     createdAt: "2024-05-01",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/summersale/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Famazon.com%2F?w=400&h=225",
   },
   {
     id: "link2",
@@ -105,7 +105,7 @@ const linksData = [
     revenue: "$8,750",
     createdAt: "2024-04-15",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/datascience/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fcoursera.org%2F?w=400&h=225",
   },
   {
     id: "link3",
@@ -118,7 +118,7 @@ const linksData = [
     revenue: "$6,200",
     createdAt: "2024-03-20",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/nordvpn/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fnordvpn.com%2F?w=400&h=225",
   },
   {
     id: "link4",
@@ -131,7 +131,7 @@ const linksData = [
     revenue: "$4,100",
     createdAt: "2024-03-01",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/skillshare/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fskillshare.com%2F?w=400&h=225",
   },
   {
     id: "link5",
@@ -157,7 +157,7 @@ const linksData = [
     revenue: "$10,500",
     createdAt: "2024-05-12",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/techgadgets/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
   {
     id: "link7",
@@ -170,7 +170,7 @@ const linksData = [
     revenue: "$9,500",
     createdAt: "2024-05-05",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/fitnessapp/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
   {
     id: "link8",
@@ -183,7 +183,7 @@ const linksData = [
     revenue: "$19,220",
     createdAt: "2024-05-20",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/mattress/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
   {
     id: "link9",
@@ -196,7 +196,7 @@ const linksData = [
     revenue: "$4,350",
     createdAt: "2024-02-10",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/mealkit/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
   {
     id: "link10",
@@ -209,7 +209,7 @@ const linksData = [
     revenue: "$19,525",
     createdAt: "2024-05-22",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/webhost/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
   {
     id: "link11",
@@ -222,7 +222,7 @@ const linksData = [
     revenue: "$750",
     createdAt: "2023-10-01",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/ebook/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
   {
     id: "link12",
@@ -235,7 +235,7 @@ const linksData = [
     revenue: "$34,300",
     createdAt: "2024-05-18",
     category: "product",
-    imageUrl: "https://picsum.photos/seed/travel/400/225",
+    imageUrl: "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fexample.com%2F?w=400&h=225",
   },
 ];
 
@@ -473,7 +473,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
             revenue: "$0.00",
             createdAt: new Date().toISOString().split("T")[0],
             category: data.category,
-            imageUrl: `https://picsum.photos/seed/${data.name.replace(/\s+/g, '')}/400/225`,
+            imageUrl: `https://s.wordpress.com/mshots/v1/${encodeURIComponent(data.url)}?w=400&h=225`,
         };
         onLinkAdded(newLink);
         toast({
