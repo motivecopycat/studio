@@ -37,7 +37,7 @@ import {
 import { useAuth } from "@/providers/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User as UserIcon, LogOut } from "lucide-react";
+import { User as UserIcon, LogOut, Laptop, Smartphone } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,16 +48,6 @@ const profileFormSchema = z.object({
   bio: z.string().max(200, "Bio must not be longer than 200 characters.").optional(),
 });
 
-const passwordFormSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required."),
-  newPassword: z.string().min(8, "New password must be at least 8 characters."),
-  confirmPassword: z.string(),
-}).refine(data => data.newPassword === data.confirmPassword, {
-  message: "Passwords do not match.",
-  path: ["confirmPassword"],
-});
-
-
 const notificationsFormSchema = z.object({
     communication_emails: z.boolean().default(false).optional(),
     marketing_emails: z.boolean().default(false).optional(),
@@ -66,8 +56,31 @@ const notificationsFormSchema = z.object({
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
-type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
+
+const loginHistory = [
+    {
+        device: "Mac - Apple iMac",
+        icon: Laptop,
+        location: "New York, USA",
+        lastActive: "Last active 2 hours ago",
+        isCurrent: true,
+    },
+    {
+        device: "iPhone - iPhone 14 Pro",
+        icon: Smartphone,
+        location: "London, UK",
+        lastActive: "Last active 1 day ago",
+        isCurrent: false,
+    },
+    {
+        device: "Windows - Dell XPS",
+        icon: Laptop,
+        location: "San Francisco, USA",
+        lastActive: "Last active 3 days ago",
+        isCurrent: false,
+    },
+];
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
@@ -81,15 +94,6 @@ export default function SettingsPage() {
       bio: "",
     },
     mode: "onChange",
-  });
-
-  const passwordForm = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordFormSchema),
-    defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    }
   });
 
   const notificationsForm = useForm<NotificationsFormValues>({
@@ -108,14 +112,6 @@ export default function SettingsPage() {
       title: "Profile Updated",
       description: "Your profile information has been saved.",
     });
-  }
-
-  function onPasswordSubmit(data: PasswordFormValues) {
-    toast({
-      title: "Password Updated",
-      description: "Your password has been changed. You will be logged out.",
-    });
-    // In a real app, you'd call a logout function here after a short delay
   }
 
   function onNotificationsSubmit(data: NotificationsFormValues) {
@@ -229,54 +225,55 @@ export default function SettingsPage() {
           <CardHeader>
               <CardTitle>Security</CardTitle>
               <CardDescription>
-                  Change your password here. After saving, you'll be logged out.
+                  Manage your account's security settings.
               </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Form {...passwordForm}>
-              <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 max-w-sm">
-                <FormField
-                    control={passwordForm.control}
-                    name="currentPassword"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Current Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={passwordForm.control}
-                    name="newPassword"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>New Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={passwordForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Confirm New Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <Button type="submit">Update password</Button>
-              </form>
-            </Form>
+          <CardContent className="space-y-8">
+            <div>
+                <h3 className="text-lg font-medium">Two-Factor Authentication</h3>
+                <p className="text-sm text-muted-foreground">
+                    Add an extra layer of security to your account by enabling 2FA.
+                </p>
+                <div className="mt-4 flex items-center justify-between rounded-lg border p-4">
+                    <FormLabel htmlFor="two-factor-auth" className="flex flex-col space-y-1">
+                        <span>Enable Two-Factor Authentication</span>
+                    </FormLabel>
+                    <Switch id="two-factor-auth" />
+                </div>
+            </div>
+             <div>
+                <h3 className="text-lg font-medium">Login History</h3>
+                <p className="text-sm text-muted-foreground">
+                    Review recent logins to ensure your account's security.
+                </p>
+                <div className="mt-4 space-y-4">
+                    <Card>
+                        <CardContent className="p-4 space-y-4">
+                            {loginHistory.map((session, index) => (
+                                <div key={index} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <session.icon className="h-6 w-6 text-muted-foreground" />
+                                        <div>
+                                            <p className="font-medium">{session.device}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {session.location} &bull; {session.lastActive}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {session.isCurrent ? (
+                                        <span className="text-sm font-semibold text-green-600">Current Session</span>
+                                    ) : (
+                                        <Button variant="link" className="p-0 h-auto text-primary">Log out</Button>
+                                    )}
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                    <Button variant="link" className="p-0 h-auto text-destructive">
+                        Log out of all other sessions
+                    </Button>
+                </div>
+            </div>
           </CardContent>
       </Card>
 
@@ -428,5 +425,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
