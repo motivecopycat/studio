@@ -401,7 +401,7 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline" onClick={() => logout()}>
+                <Button onClick={() => logout()}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Log Out
                 </Button>
