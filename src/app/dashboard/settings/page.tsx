@@ -110,18 +110,29 @@ export default function SettingsPage() {
     },
   });
 
+  const onNotificationsSubmit = (data: NotificationsFormValues) => {
+    toast({
+      title: "Notifications Updated",
+      description: "Your notification preferences have been saved.",
+    })
+  }
+
+  const watchedFields = notificationsForm.watch();
+
+    React.useEffect(() => {
+        const subscription = notificationsForm.watch((value, { name, type }) => {
+            if (type === 'change') {
+                notificationsForm.handleSubmit(onNotificationsSubmit)();
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [notificationsForm]);
+
   function onProfileSubmit(data: ProfileFormValues) {
     toast({
       title: "Profile Updated",
       description: "Your profile information has been saved.",
     });
-  }
-
-  function onNotificationsSubmit(data: NotificationsFormValues) {
-    toast({
-      title: "Notifications Updated",
-      description: "Your notification preferences have been saved.",
-    })
   }
 
   function onDeleteAccount() {
@@ -325,10 +336,7 @@ export default function SettingsPage() {
                             <FormControl>
                               <Switch
                                 checked={field.value}
-                                onCheckedChange={(checked) => {
-                                    field.onChange(checked);
-                                    notificationsForm.handleSubmit(onNotificationsSubmit)();
-                                }}
+                                onCheckedChange={field.onChange}
                               />
                             </FormControl>
                           </FormItem>
@@ -350,10 +358,7 @@ export default function SettingsPage() {
                             <FormControl>
                               <Switch
                                 checked={field.value}
-                                onCheckedChange={(checked) => {
-                                    field.onChange(checked);
-                                    notificationsForm.handleSubmit(onNotificationsSubmit)();
-                                }}
+                                onCheckedChange={field.onChange}
                               />
                             </FormControl>
                           </FormItem>
@@ -375,10 +380,7 @@ export default function SettingsPage() {
                             <FormControl>
                               <Switch
                                 checked={field.value}
-                                onCheckedChange={(checked) => {
-                                    field.onChange(checked);
-                                    notificationsForm.handleSubmit(onNotificationsSubmit)();
-                                }}
+                                onCheckedChange={field.onChange}
                               />
                             </FormControl>
                           </FormItem>
@@ -452,5 +454,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
