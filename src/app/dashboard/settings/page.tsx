@@ -268,7 +268,7 @@ export default function SettingsPage() {
                                     {session.isCurrent ? (
                                         <span className="text-sm font-semibold text-green-600">Current Session</span>
                                     ) : (
-                                        <Button variant="link" className="p-0 h-auto text-primary">Log out</Button>
+                                        <Button variant="link" className="p-0 h-auto text-red-600 dark:text-blue-500 hover:text-red-700 dark:hover:text-blue-400">Log out</Button>
                                     )}
                                 </div>
                             ))}
@@ -401,7 +401,7 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
-                <Button onClick={() => logout()}>
+                <Button onClick={() => logout()} variant="default">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log Out
                 </Button>
