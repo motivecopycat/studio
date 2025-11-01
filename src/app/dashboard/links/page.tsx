@@ -581,6 +581,19 @@ export default function LinksPage() {
         });
     };
 
+    const handleBulkStatusChange = (status: "Active" | "Paused" | "Archived") => {
+        setAllLinks(prev => 
+            prev.map(link => 
+                selectedLinks.includes(link.id) ? { ...link, status } : link
+            )
+        );
+        toast({
+            title: "Links Updated",
+            description: `${selectedLinks.length} link(s) have been ${status.toLowerCase()}.`,
+        });
+        setSelectionMode(false);
+    };
+
     const filteredLinks = allLinks.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
@@ -657,9 +670,9 @@ export default function LinksPage() {
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-48 p-2">
-                                        <Button variant="ghost" className="w-full justify-start">Activate Selected</Button>
-                                        <Button variant="ghost" className="w-full justify-start">Pause Selected</Button>
-                                        <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-500">Archive Selected</Button>
+                                        <Button variant="ghost" className="w-full justify-start" onClick={() => handleBulkStatusChange("Active")}>Activate Selected</Button>
+                                        <Button variant="ghost" className="w-full justify-start" onClick={() => handleBulkStatusChange("Paused")}>Pause Selected</Button>
+                                        <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-500" onClick={() => handleBulkStatusChange("Archived")}>Archive Selected</Button>
                                     </PopoverContent>
                                 </Popover>
                             </>
@@ -753,3 +766,4 @@ export default function LinksPage() {
     </div>
   );
 }
+
