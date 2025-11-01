@@ -235,9 +235,9 @@ export default function SettingsPage() {
                     Add an extra layer of security to your account by enabling 2FA.
                 </p>
                 <div className="mt-4 flex items-center justify-between rounded-lg border p-4">
-                    <FormLabel htmlFor="two-factor-auth" className="flex flex-col space-y-1">
+                    <label htmlFor="two-factor-auth" className="flex flex-col space-y-1 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         <span>Enable Two-Factor Authentication</span>
-                    </FormLabel>
+                    </label>
                     <Switch id="two-factor-auth" />
                 </div>
             </div>
