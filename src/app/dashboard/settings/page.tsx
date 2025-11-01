@@ -110,17 +110,6 @@ export default function SettingsPage() {
     },
   });
 
-  const { watch, handleSubmit } = notificationsForm;
-  const notificationValues = watch();
-
-  React.useEffect(() => {
-    const subscription = watch((values) => {
-        handleSubmit(onNotificationsSubmit)();
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, handleSubmit]);
-
-
   function onProfileSubmit(data: ProfileFormValues) {
     toast({
       title: "Profile Updated",
@@ -316,7 +305,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <Form {...notificationsForm}>
-                <form className="space-y-8">
+                <form onSubmit={notificationsForm.handleSubmit(onNotificationsSubmit)} className="space-y-8">
                   <div>
                     <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
                     <div className="space-y-4">
@@ -336,7 +325,10 @@ export default function SettingsPage() {
                             <FormControl>
                               <Switch
                                 checked={field.value}
-                                onCheckedChange={field.onChange}
+                                onCheckedChange={(checked) => {
+                                    field.onChange(checked);
+                                    notificationsForm.handleSubmit(onNotificationsSubmit)();
+                                }}
                               />
                             </FormControl>
                           </FormItem>
@@ -358,7 +350,10 @@ export default function SettingsPage() {
                             <FormControl>
                               <Switch
                                 checked={field.value}
-                                onCheckedChange={field.onChange}
+                                onCheckedChange={(checked) => {
+                                    field.onChange(checked);
+                                    notificationsForm.handleSubmit(onNotificationsSubmit)();
+                                }}
                               />
                             </FormControl>
                           </FormItem>
@@ -380,7 +375,10 @@ export default function SettingsPage() {
                             <FormControl>
                               <Switch
                                 checked={field.value}
-                                onCheckedChange={field.onChange}
+                                onCheckedChange={(checked) => {
+                                    field.onChange(checked);
+                                    notificationsForm.handleSubmit(onNotificationsSubmit)();
+                                }}
                               />
                             </FormControl>
                           </FormItem>
@@ -454,3 +452,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+    
