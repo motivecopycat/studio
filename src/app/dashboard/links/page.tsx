@@ -525,28 +525,24 @@ const LinkCards = ({
                         </div>
                     )}
                     <CardHeader onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
-                        <div className="flex justify-between items-start">
-                             <div>
-                                <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
-                                <CardDescription>
-                                    <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
-                                </CardDescription>
-                            </div>
+                        <div className="flex justify-between items-center gap-2">
+                             <CardTitle className="text-base font-semibold leading-tight">{link.name}</CardTitle>
+                             <Badge variant={getStatusVariant(link.status)} className="shrink-0">{link.status}</Badge>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-2 text-sm" onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
+                    <CardContent className="space-y-4 text-sm" onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
                         <div className="flex justify-between">
                             <div className="flex flex-col">
-                                <span className="text-muted-foreground">Clicks</span>
-                                <span className="font-medium">{link.clicks.toLocaleString()}</span>
+                                <span className="text-xs text-muted-foreground">Clicks</span>
+                                <span className="font-medium text-base">{link.clicks.toLocaleString()}</span>
                             </div>
                             <div className="flex flex-col items-end">
-                                <span className="text-muted-foreground">Conversions</span>
-                                <span className="font-medium">{link.conversions.toLocaleString()}</span>
+                                <span className="text-xs text-muted-foreground">Conversions</span>
+                                <span className="font-medium text-base">{link.conversions.toLocaleString()}</span>
                             </div>
                         </div>
                          <div>
-                            <div className="text-muted-foreground">Affiliate Link</div>
+                            <div className="text-xs text-muted-foreground">Affiliate Link</div>
                             <div className="truncate text-primary hover:underline">
                                 <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>{link.link}</a>
                             </div>
@@ -1079,3 +1075,6 @@ export default function LinksPage() {
     </div>
   );
 }
+
+
+    
