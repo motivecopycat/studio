@@ -134,7 +134,7 @@ export default function SingleLinkAnalyticsPage() {
     <div className="space-y-6">
        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-4">
-            <Button variant="outline" size="icon" onClick={() => router.back()} className="shrink-0 mt-1 sm:mt-0">
+            <Button variant="outline" size="icon" onClick={() => router.back()} className="shrink-0">
                 <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex-grow space-y-1">
@@ -237,3 +237,5 @@ export default function SingleLinkAnalyticsPage() {
     </div>
   );
 }
+
+    
