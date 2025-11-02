@@ -132,20 +132,20 @@ export default function SingleLinkAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <div className="flex items-center gap-4 flex-grow w-full">
+       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" onClick={() => router.back()} className="shrink-0">
                 <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex-grow">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate" title={linkData.name}>
+                <h1 className="text-2xl font-bold tracking-tight truncate" title={linkData.name}>
                     Analysis: {linkData.name}
                 </h1>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
                     <Badge variant={getStatusVariant(linkData.status)}>{linkData.status}</Badge>
                     <span className="flex items-center gap-1 truncate">
                         <Link2 className="h-3 w-3" />
-                        <span className="truncate">{linkData.link}</span>
+                        <a href={linkData.link} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{linkData.link}</a>
                     </span>
                 </div>
             </div>
@@ -157,7 +157,7 @@ export default function SingleLinkAnalyticsPage() {
                 id="date"
                 variant={"outline"}
                 className={cn(
-                  "w-full sm:w-[300px] justify-start text-left font-normal",
+                  "w-full sm:w-[260px] justify-start text-left font-normal",
                   !date && "text-muted-foreground"
                 )}
               >
@@ -218,17 +218,17 @@ export default function SingleLinkAnalyticsPage() {
             <CardDescription>Performance over the selected period.</CardDescription>
         </CardHeader>
         <CardContent>
-            <ChartContainer config={chartConfig} className="h-[350px] w-full">
-            <LineChart data={performanceData}>
+            <ChartContainer config={chartConfig} className="h-[300px] sm:h-[350px] w-full">
+            <LineChart data={performanceData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                 <CartesianGrid vertical={false} />
-                <XAxis dataKey="date" tickFormatter={(value) => format(new Date(value), 'MMM d')} />
-                <YAxis yAxisId="left" orientation="left" stroke="var(--color-clicks)" />
-                <YAxis yAxisId="right" orientation="right" stroke="var(--color-revenue)" />
+                <XAxis dataKey="date" tickFormatter={(value) => format(new Date(value), 'MMM d')} tickMargin={8} />
+                <YAxis yAxisId="left" orientation="left" stroke="var(--color-clicks)" tickMargin={8} />
+                <YAxis yAxisId="right" orientation="right" stroke="var(--color-revenue)" tickMargin={8} />
                 <Tooltip content={<ChartTooltipContent indicator="dot" />} />
-                <Legend />
-                <Line yAxisId="left" type="monotone" dataKey="clicks" stroke="var(--color-clicks)" strokeWidth={2} name="Clicks" />
-                <Line yAxisId="left" type="monotone" dataKey="conversions" stroke="var(--color-conversions)" strokeWidth={2} name="Conversions" />
-                <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} name="Revenue ($)" />
+                <Legend wrapperStyle={{paddingTop: 20}} />
+                <Line yAxisId="left" type="monotone" dataKey="clicks" stroke="var(--color-clicks)" strokeWidth={2} name="Clicks" dot={false} />
+                <Line yAxisId="left" type="monotone" dataKey="conversions" stroke="var(--color-conversions)" strokeWidth={2} name="Conversions" dot={false} />
+                <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} name="Revenue ($)" dot={false} />
             </LineChart>
             </ChartContainer>
         </CardContent>
