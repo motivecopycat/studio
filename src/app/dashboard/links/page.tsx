@@ -78,6 +78,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { DropdownMenuGroup, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 
 const linksData = [
@@ -266,44 +267,45 @@ const getStatusVariant = (status: string) => {
 const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, children: React.ReactNode, onLinkUpdated: (updatedLink: any) => void }) => (
     <Popover>
         {children}
-        <PopoverContent align="end" className="w-48 p-2">
-        <div className="flex flex-col space-y-1">
-          <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onCopy(link.link)}>
-            <Copy className="mr-2 h-4 w-4" />
-            Copy Link
-          </Button>
-          <EditLinkDialog link={link} onLinkUpdated={onLinkUpdated}>
+        <PopoverContent align="end" className="w-48 p-1">
+          <DropdownMenuGroup>
+            <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onCopy(link.link)}>
+              <Copy className="mr-2 h-4 w-4" />
+              Copy Link
+            </Button>
+            <EditLinkDialog link={link} onLinkUpdated={onLinkUpdated}>
+              <Button variant="ghost" className="w-full justify-start text-sm">
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+              </Button>
+            </EditLinkDialog>
+            {link.status !== 'Paused' ? (
+               <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Paused')}>
+                  <PauseCircle className="mr-2 h-4 w-4" />
+                  Pause
+              </Button>
+            ) : (
+              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Active')}>
+                  <PlayCircle className="mr-2 h-4 w-4" />
+                  Activate
+              </Button>
+            )}
+            <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
+              <Button variant="ghost" className="w-full justify-start text-sm">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Analysis
+              </Button>
+            </Link>
             <Button variant="ghost" className="w-full justify-start text-sm">
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
+              <Send className="mr-2 h-4 w-4" />
+              Share with friends (AI)
             </Button>
-          </EditLinkDialog>
-          {link.status !== 'Paused' ? (
-             <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Paused')}>
-                <PauseCircle className="mr-2 h-4 w-4" />
-                Pause
-            </Button>
-          ) : (
-            <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Active')}>
-                <PlayCircle className="mr-2 h-4 w-4" />
-                Activate
-            </Button>
-          )}
-          <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
-            <Button variant="ghost" className="w-full justify-start text-sm">
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Analysis
-            </Button>
-          </Link>
-          <Button variant="ghost" className="w-full justify-start text-sm">
-            <Send className="mr-2 h-4 w-4" />
-            Share with friends (AI)
-          </Button>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
           <Button variant="ghost" className="w-full justify-start text-sm text-red-600 hover:text-red-600" onClick={() => onArchive(link.id)}>
             <Trash2 className="mr-2 h-4 w-4" />
             Archive
           </Button>
-        </div>
         </PopoverContent>
     </Popover>
 );
