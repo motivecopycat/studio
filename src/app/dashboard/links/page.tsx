@@ -525,8 +525,8 @@ const LinkCards = ({
                         </div>
                     )}
                     <CardHeader onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
-                        <div className="flex justify-between items-center gap-2">
-                             <CardTitle className="text-base font-semibold leading-tight">{link.name}</CardTitle>
+                        <div className="flex justify-between items-start gap-2">
+                             <CardTitle className="text-base font-semibold leading-tight flex-1">{link.name}</CardTitle>
                              <Badge variant={getStatusVariant(link.status)} className="shrink-0">{link.status}</Badge>
                         </div>
                     </CardHeader>
