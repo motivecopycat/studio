@@ -19,40 +19,15 @@ export const ShareLinkOutputSchema = z.object({
 
 export type ShareLinkOutput = z.infer<typeof ShareLinkOutputSchema>;
 
-const sharePrompt = ai.definePrompt({
-    name: 'sharePrompt',
-    input: { schema: ShareLinkInputSchema },
-    output: { schema: ShareLinkOutputSchema },
-    prompt: `You are a friendly and helpful assistant. A user wants to share an affiliate link with their friend, {{friendName}}.
-
-    Link Details:
-    - Name: {{linkName}}
-    - URL: {{linkUrl}}
-    
-    User's custom message: "{{customMessage}}"
-    
-    Your task is to generate a friendly and engaging message that the user can send to their friend.
-    - Start by greeting the friend by their name.
-    - Naturally incorporate the user's custom message if they provided one. If not, create a warm opening.
-    - Briefly explain what the link is about and why it might be interesting for them.
-    - Make sure to include the affiliate link in the message.
-    - Keep the tone casual and persuasive, like a real recommendation from a friend.
-    
-    Return only the generated message in the 'generatedMessage' field.`,
-});
-
-const shareLinkFlow = ai.defineFlow(
-  {
-    name: 'shareLinkFlow',
-    inputSchema: ShareLinkInputSchema,
-    outputSchema: ShareLinkOutputSchema,
-  },
-  async (input) => {
-    const { output } = await sharePrompt(input);
-    return output!;
-  }
-);
-
 export async function shareLink(input: ShareLinkInput): Promise<ShareLinkOutput> {
-  return shareLinkFlow(input);
+  // Temporary fallback without AI
+  let message = `Hey ${input.friendName},\n\n`;
+  if (input.customMessage) {
+    message += `${input.customMessage}\n\n`;
+  } else {
+    message += `I found this cool link and thought you might like it!\n\n`;
+  }
+  message += `Check out "${input.linkName}" here: ${input.linkUrl}`;
+  
+  return { generatedMessage: message };
 }
