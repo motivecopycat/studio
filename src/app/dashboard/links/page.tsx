@@ -331,10 +331,6 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }:
                 <TableHead>Affiliate Link</TableHead>
                 <TableHead className="text-right">Clicks</TableHead>
                 <TableHead className="text-right">Conversions</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>
-                <span className="sr-only">Actions</span>
-                </TableHead>
             </TableRow>
             </TableHeader>
             <TableBody>
@@ -353,10 +349,6 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }:
                 </TableCell>
                 <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
                 <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                <TableCell>{link.createdAt}</TableCell>
-                <TableCell padding="checkbox">
-                    <DesktopLinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} />
-                </TableCell>
                 </TableRow>
             ))}
             </TableBody>
