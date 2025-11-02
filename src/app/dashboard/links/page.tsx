@@ -78,7 +78,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { DropdownMenuGroup, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 
 const linksData = [
@@ -265,59 +265,57 @@ const getStatusVariant = (status: string) => {
 };
 
 const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, children: React.ReactNode, onLinkUpdated: (updatedLink: any) => void }) => (
-    <Popover>
-        {children}
-        <PopoverContent align="end" className="w-48 p-1">
+    <DropdownMenu>
+        <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuGroup>
-            <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onCopy(link.link)}>
+            <DropdownMenuItem onClick={() => onCopy(link.link)}>
               <Copy className="mr-2 h-4 w-4" />
               Copy Link
-            </Button>
+            </DropdownMenuItem>
             <EditLinkDialog link={link} onLinkUpdated={onLinkUpdated}>
-              <Button variant="ghost" className="w-full justify-start text-sm">
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
-              </Button>
+              </DropdownMenuItem>
             </EditLinkDialog>
             {link.status !== 'Paused' ? (
-               <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Paused')}>
+               <DropdownMenuItem onClick={() => onStatusChange(link.id, 'Paused')}>
                   <PauseCircle className="mr-2 h-4 w-4" />
                   Pause
-              </Button>
+              </DropdownMenuItem>
             ) : (
-              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onStatusChange(link.id, 'Active')}>
+              <DropdownMenuItem onClick={() => onStatusChange(link.id, 'Active')}>
                   <PlayCircle className="mr-2 h-4 w-4" />
                   Activate
-              </Button>
+              </DropdownMenuItem>
             )}
-            <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
-              <Button variant="ghost" className="w-full justify-start text-sm">
+            <DropdownMenuItem asChild>
+              <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
                 <BarChart3 className="mr-2 h-4 w-4" />
                 Analysis
-              </Button>
-            </Link>
-            <Button variant="ghost" className="w-full justify-start text-sm">
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
               <Send className="mr-2 h-4 w-4" />
               Share with friends (AI)
-            </Button>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <Button variant="ghost" className="w-full justify-start text-sm text-red-600 hover:text-red-600" onClick={() => onArchive(link.id)}>
+          <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={() => onArchive(link.id)}>
             <Trash2 className="mr-2 h-4 w-4" />
             Archive
-          </Button>
-        </PopoverContent>
-    </Popover>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu>
 );
 
 const DesktopLinkActions = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void }) => (
     <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated}>
-      <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
-      </PopoverTrigger>
     </LinkActions>
 );
 
@@ -325,17 +323,28 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }:
     return (
         <Table>
             <TableHeader>
-            <TableRow>
-                <TableHead>Link Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Affiliate Link</TableHead>
-                <TableHead className="text-right">Clicks</TableHead>
-                <TableHead className="text-right">Conversions</TableHead>
-            </TableRow>
+                <TableRow>
+                    <TableHead className="w-[80px]">Preview</TableHead>
+                    <TableHead>Link Name</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Affiliate Link</TableHead>
+                    <TableHead className="text-right">Clicks</TableHead>
+                    <TableHead className="text-right">Conversions</TableHead>
+                </TableRow>
             </TableHeader>
             <TableBody>
             {links.map((link) => (
                 <TableRow key={link.id}>
+                <TableCell>
+                    <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
+                        <Image 
+                            src={link.imageUrl} 
+                            alt={link.name} 
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                </TableCell>
                 <TableCell className="font-medium">{link.name}</TableCell>
                 <TableCell>
                     <Badge variant={getStatusVariant(link.status)}>
@@ -398,12 +407,23 @@ const LinkCards = ({
                             />
                         </div>
                     )}
-                    <CardHeader className="flex flex-row items-start justify-between">
-                        <div>
-                            <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
-                            <CardDescription>
-                                <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
-                            </CardDescription>
+                    <CardHeader>
+                        <div className="flex justify-between items-start">
+                             <div>
+                                <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
+                                <CardDescription>
+                                    <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
+                                </CardDescription>
+                            </div>
+                            {!selectionMode && (
+                                <DesktopLinkActions 
+                                    link={link} 
+                                    onCopy={onCopy} 
+                                    onStatusChange={onStatusChange} 
+                                    onArchive={onArchive}
+                                    onLinkUpdated={onLinkUpdated}
+                                />
+                            )}
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-2 text-sm">
@@ -427,15 +447,7 @@ const LinkCards = ({
                 </Card>
             );
 
-            if (selectionMode) {
-                return cardContent;
-            }
-
-            return (
-                <LinkActions key={link.id} link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated}>
-                    <PopoverTrigger asChild>{cardContent}</PopoverTrigger>
-                </LinkActions>
-            );
+            return selectionMode ? cardContent : <div key={link.id}>{cardContent}</div>;
         })}
     </div>
 );
@@ -933,5 +945,7 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
 
     
