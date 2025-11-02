@@ -7,6 +7,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import type { ShareLinkInput } from "@/ai/flows/share-link-types";
 import { shareLink } from "@/ai/flows/share-link-flow";
 
 import {
@@ -57,6 +58,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   PlusCircle,
   Copy,
@@ -687,7 +689,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                                         >
                                             Product
                                         </Button>
-                                        <Button 
+                                        <Button _
                                             type="button" 
                                             variant={field.value === 'movie' ? 'default' : 'outline'}
                                             onClick={() => field.onChange('movie')}
@@ -1076,5 +1078,7 @@ export default function LinksPage() {
   );
 }
 
+
+    
 
     
