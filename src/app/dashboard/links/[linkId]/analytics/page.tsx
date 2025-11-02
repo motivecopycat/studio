@@ -227,7 +227,7 @@ export default function SingleLinkAnalyticsPage() {
                 <Tooltip content={<ChartTooltipContent indicator="dot" />} />
                 <Legend wrapperStyle={{paddingTop: 20}} />
                 <Line yAxisId="left" type="monotone" dataKey="clicks" stroke="var(--color-clicks)" strokeWidth={2} name="Clicks" dot={false} />
-                <Line yAxisId="left" type="monotone" dataKey="conversions" stroke="var(--color-conversions)" strokeWidth={2} name="Conversions" dot={falsle} />
+                <Line yAxisId="left" type="monotone" dataKey="conversions" stroke="var(--color-conversions)" strokeWidth={2} name="Conversions" dot={false} />
                 <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} name="Revenue ($)" dot={false} />
             </LineChart>
             </ChartContainer>
