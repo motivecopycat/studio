@@ -58,7 +58,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   PlusCircle,
-  MoreHorizontal,
   Copy,
   Edit,
   Trash2,
@@ -264,59 +263,47 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActions = ({ link, onCopy, onStatusChange, onArchive, children, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, children: React.ReactNode, onLinkUpdated: (updatedLink: any) => void }) => (
-    <DropdownMenu>
-        <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => onCopy(link.link)}>
-              <Copy className="mr-2 h-4 w-4" />
-              Copy Link
-            </DropdownMenuItem>
-            <EditLinkDialog link={link} onLinkUpdated={onLinkUpdated}>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-              </DropdownMenuItem>
-            </EditLinkDialog>
-            {link.status !== 'Paused' ? (
-               <DropdownMenuItem onClick={() => onStatusChange(link.id, 'Paused')}>
-                  <PauseCircle className="mr-2 h-4 w-4" />
-                  Pause
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem onClick={() => onStatusChange(link.id, 'Active')}>
-                  <PlayCircle className="mr-2 h-4 w-4" />
-                  Activate
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem asChild>
-              <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
-                <BarChart3 className="mr-2 h-4 w-4" />
-                Analysis
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Send className="mr-2 h-4 w-4" />
-              Share with friends (AI)
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={() => onArchive(link.id)}>
-            <Trash2 className="mr-2 h-4 w-4" />
-            Archive
+const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void }) => (
+    <>
+      <DropdownMenuGroup>
+        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onCopy(link.link); }}>
+          <Copy className="mr-2 h-4 w-4" />
+          Copy Link
+        </DropdownMenuItem>
+        <EditLinkDialog link={link} onLinkUpdated={onLinkUpdated}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={(e) => e.stopPropagation()}>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
           </DropdownMenuItem>
-        </DropdownMenuContent>
-    </DropdownMenu>
-);
-
-const DesktopLinkActions = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void }) => (
-    <LinkActions link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated}>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-    </LinkActions>
+        </EditLinkDialog>
+        {link.status !== 'Paused' ? (
+           <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onStatusChange(link.id, 'Paused'); }}>
+              <PauseCircle className="mr-2 h-4 w-4" />
+              Pause
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onStatusChange(link.id, 'Active'); }}>
+              <PlayCircle className="mr-2 h-4 w-4" />
+              Activate
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
+          <Link href={`/dashboard/links/${link.id}/analytics`} className="w-full">
+            <BarChart3 className="mr-2 h-4 w-4" />
+            Analysis
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+          <Send className="mr-2 h-4 w-4" />
+          Share with friends (AI)
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={(e) => { e.stopPropagation(); onArchive(link.id); }}>
+        <Trash2 className="mr-2 h-4 w-4" />
+        Archive
+      </DropdownMenuItem>
+    </>
 );
 
 const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void }) => {
@@ -334,31 +321,38 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated }:
             </TableHeader>
             <TableBody>
             {links.map((link) => (
-                <TableRow key={link.id}>
-                <TableCell>
-                    <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
-                        <Image 
-                            src={link.imageUrl} 
-                            alt={link.name} 
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
-                </TableCell>
-                <TableCell className="font-medium">{link.name}</TableCell>
-                <TableCell>
-                    <Badge variant={getStatusVariant(link.status)}>
-                    {link.status}
-                    </Badge>
-                </TableCell>
-                <TableCell>
-                    <a href={link.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]">
-                        {link.link}
-                    </a>
-                </TableCell>
-                <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
-                <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                </TableRow>
+                <DropdownMenu key={link.id}>
+                    <DropdownMenuTrigger asChild>
+                        <TableRow className="cursor-pointer">
+                        <TableCell>
+                            <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
+                                <Image 
+                                    src={link.imageUrl} 
+                                    alt={link.name} 
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+                        </TableCell>
+                        <TableCell className="font-medium">{link.name}</TableCell>
+                        <TableCell>
+                            <Badge variant={getStatusVariant(link.status)}>
+                            {link.status}
+                            </Badge>
+                        </TableCell>
+                        <TableCell>
+                            <a href={link.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]" onClick={(e) => e.stopPropagation()}>
+                                {link.link}
+                            </a>
+                        </TableCell>
+                        <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
+                        <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
+                        </TableRow>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
             ))}
             </TableBody>
         </Table>
@@ -389,7 +383,7 @@ const LinkCards = ({
             const cardContent = (
                 <Card 
                     key={link.id} 
-                    className={selectedLinks.includes(link.id) ? 'border-primary' : ''}
+                    className={`cursor-pointer ${selectedLinks.includes(link.id) ? 'border-primary' : ''}`}
                     onClick={() => {
                         if (selectionMode) {
                             onSelectLink(link.id);
@@ -397,7 +391,7 @@ const LinkCards = ({
                     }}
                 >
                     {link.imageUrl && (
-                        <div className="aspect-[16/9] relative">
+                        <div className="aspect-[16/9] relative" onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
                             <Image 
                                 src={link.imageUrl} 
                                 alt={link.name} 
@@ -407,7 +401,7 @@ const LinkCards = ({
                             />
                         </div>
                     )}
-                    <CardHeader>
+                    <CardHeader onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
                         <div className="flex justify-between items-start">
                              <div>
                                 <CardTitle className="font-medium pr-4">{link.name}</CardTitle>
@@ -415,18 +409,9 @@ const LinkCards = ({
                                     <Badge variant={getStatusVariant(link.status)}>{link.status}</Badge>
                                 </CardDescription>
                             </div>
-                            {!selectionMode && (
-                                <DesktopLinkActions 
-                                    link={link} 
-                                    onCopy={onCopy} 
-                                    onStatusChange={onStatusChange} 
-                                    onArchive={onArchive}
-                                    onLinkUpdated={onLinkUpdated}
-                                />
-                            )}
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-2 text-sm">
+                    <CardContent className="space-y-2 text-sm" onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
                         <div className="flex justify-between">
                             <div className="flex flex-col">
                                 <span className="text-muted-foreground">Clicks</span>
@@ -440,14 +425,23 @@ const LinkCards = ({
                          <div>
                             <div className="text-muted-foreground">Affiliate Link</div>
                             <div className="truncate text-primary hover:underline">
-                                <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
+                                <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>{link.link}</a>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
             );
 
-            return selectionMode ? cardContent : <div key={link.id}>{cardContent}</div>;
+            return selectionMode ? <div key={link.id}>{cardContent}</div> : (
+                <DropdownMenu key={link.id}>
+                    <DropdownMenuTrigger asChild>
+                        <div>{cardContent}</div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                         <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
         })}
     </div>
 );
