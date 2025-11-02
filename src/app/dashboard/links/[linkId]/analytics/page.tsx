@@ -157,7 +157,7 @@ export default function SingleLinkAnalyticsPage() {
                 id="date"
                 variant={"outline"}
                 className={cn(
-                  "w-full sm:w-[260px] justify-start text-left font-normal",
+                  "w-full justify-start text-left font-normal sm:w-[260px]",
                   !date && "text-muted-foreground"
                 )}
               >
@@ -218,7 +218,7 @@ export default function SingleLinkAnalyticsPage() {
             <CardDescription>Performance over the selected period.</CardDescription>
         </CardHeader>
         <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px] sm:h-[350px] w-full">
+            <ChartContainer config={chartConfig} className="h-[300px] w-full sm:h-[350px]">
             <LineChart data={performanceData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="date" tickFormatter={(value) => format(new Date(value), 'MMM d')} tickMargin={8} />
