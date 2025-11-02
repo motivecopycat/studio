@@ -105,6 +105,9 @@ export default function DashboardHeader() {
       <div className="flex items-center gap-2">
         <LanguageSwitcher />
         <ThemeSwitcher />
+        <div className="hidden sm:block">
+            <UserNav />
+        </div>
       </div>
     </header>
   );
