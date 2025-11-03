@@ -7,8 +7,6 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import type { ShareLinkInput } from "@/ai/flows/share-link-types";
-import { shareLink } from "@/ai/flows/share-link-flow";
 
 import {
   Table,
@@ -58,7 +56,6 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   PlusCircle,
   Copy,
@@ -268,124 +265,6 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const ShareLinkDialog = ({ link, open, onOpenChange }: { link: (typeof linksData)[0], open: boolean, onOpenChange: (open: boolean) => void }) => {
-    const { toast } = useToast();
-    const [friendName, setFriendName] = React.useState('');
-    const [customMessage, setCustomMessage] = React.useState('');
-    const [generatedMessage, setGeneratedMessage] = React.useState('');
-    const [isLoading, setIsLoading] = React.useState(false);
-
-    const handleGenerateMessage = async () => {
-        if (!friendName.trim()) {
-            toast({
-                variant: "destructive",
-                title: "Friend's Name Required",
-                description: "Please enter your friend's name.",
-            });
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const result = await shareLink({
-                linkName: link.name,
-                linkUrl: link.link,
-                friendName: friendName,
-                customMessage: customMessage,
-            });
-            setGeneratedMessage(result.generatedMessage);
-        } catch (error) {
-            console.error("Error generating message:", error);
-            toast({
-                variant: "destructive",
-                title: "AI Error",
-                description: "Failed to generate message. Please try again.",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleCopyMessage = () => {
-        navigator.clipboard.writeText(generatedMessage);
-        toast({
-            title: "Message Copied!",
-            description: "The generated message has been copied to your clipboard.",
-        });
-    };
-
-    const resetState = () => {
-        setFriendName('');
-        setCustomMessage('');
-        setGeneratedMessage('');
-        setIsLoading(false);
-    }
-    
-    React.useEffect(() => {
-        if (open) {
-            resetState();
-        }
-    }, [open]);
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle>Share "{link.name}"</DialogTitle>
-                    <DialogDescription>
-                        {generatedMessage ? "Your AI-generated message is ready to be shared!" : "Generate a personalized message to share this link with a friend."}
-                    </DialogDescription>
-                </DialogHeader>
-                {generatedMessage ? (
-                    <div className="space-y-4">
-                        <div className="rounded-md border bg-muted p-4 text-sm whitespace-pre-wrap">
-                            {generatedMessage}
-                        </div>
-                        <Button onClick={handleCopyMessage} className="w-full">
-                            <Copy className="mr-2 h-4 w-4" /> Copy Message
-                        </Button>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="friend-name">Friend's Name</Label>
-                            <Input 
-                                id="friend-name" 
-                                placeholder="e.g. Jane" 
-                                value={friendName}
-                                onChange={(e) => setFriendName(e.target.value)} 
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="custom-message">Your Message (Optional)</Label>
-                            <Textarea 
-                                id="custom-message" 
-                                placeholder="e.g. Check this out!" 
-                                value={customMessage}
-                                onChange={(e) => setCustomMessage(e.target.value)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                    </div>
-                )}
-                <DialogFooter className="sm:justify-start">
-                     {generatedMessage ? (
-                         <Button type="button" variant="secondary" onClick={() => setGeneratedMessage('')} disabled={isLoading}>
-                             Generate another
-                         </Button>
-                     ) : (
-                        <Button type="button" onClick={handleGenerateMessage} disabled={isLoading}>
-                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-                            Generate Message
-                        </Button>
-                     )}
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
-};
-
-
 const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: () => void }) => (
     <>
       <DropdownMenuGroup>
@@ -418,7 +297,7 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
         </DropdownMenuItem>
         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShare(); }}>
           <Send className="mr-2 h-4 w-4" />
-          Share with friends (AI)
+          Share
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
@@ -556,9 +435,6 @@ const LinkCards = ({
 const AddLinkSchema = z.object({
     name: z.string().min(1, { message: "Link name is required." }),
     url: z.string().url({ message: "Please enter a valid URL." }),
-    category: z.enum(["product", "movie"], {
-        required_error: "You need to select a category.",
-    }),
 });
 
 type AddLinkValues = z.infer<typeof AddLinkSchema>;
@@ -595,7 +471,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
             epc: "$0.00",
             revenue: "$0.00",
             createdAt: new Date().toISOString().split("T")[0],
-            category: data.category,
+            category: "product",
             imageUrl: `https://s.wordpress.com/mshots/v1/${encodeURIComponent(data.url)}?w=400&h=225`,
         };
         onLinkAdded(newLink);
@@ -660,34 +536,6 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                                 </FormItem>
                             )}
                         />
-                         <FormField
-                            control={form.control}
-                            name="category"
-                            render={({ field }) => (
-                                <FormItem className="space-y-3">
-                                <FormLabel>Category</FormLabel>
-                                <FormControl>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Button 
-                                            type="button" 
-                                            variant={field.value === 'product' ? 'default' : 'outline'}
-                                            onClick={() => field.onChange('product')}
-                                        >
-                                            Product
-                                        </Button>
-                                        <Button 
-                                            type="button" 
-                                            variant={field.value === 'movie' ? 'default' : 'outline'}
-                                            onClick={() => field.onChange('movie')}
-                                        >
-                                            Movie
-                                        </Button>
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <DialogFooter>
                             <Button type="submit">Create Link</Button>
                         </DialogFooter>
@@ -707,7 +555,6 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
         defaultValues: {
             name: link.name,
             url: link.destinationUrl,
-            category: link.category,
         },
     });
 
@@ -722,7 +569,6 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
             ...link,
             name: data.name,
             destinationUrl: data.url,
-            category: data.category,
             link: shortLink,
             imageUrl: imageUrl,
         };
@@ -772,34 +618,6 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
                                 </FormItem>
                             )}
                         />
-                         <FormField
-                            control={form.control}
-                            name="category"
-                            render={({ field }) => (
-                                <FormItem className="space-y-3">
-                                <FormLabel>Category</FormLabel>
-                                <FormControl>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Button 
-                                            type="button" 
-                                            variant={field.value === 'product' ? 'default' : 'outline'}
-                                            onClick={() => field.onChange('product')}
-                                        >
-                                            Product
-                                        </Button>
-                                        <Button 
-                                            type="button" 
-                                            variant={field.value === 'movie' ? 'default' : 'outline'}
-                                            onClick={() => field.onChange('movie')}
-                                        >
-                                            Movie
-                                        </Button>
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <DialogFooter>
                             <Button type="submit">Save Changes</Button>
                         </DialogFooter>
@@ -821,12 +639,29 @@ export default function LinksPage() {
     const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
     const [selectionMode, setSelectionMode] = React.useState(false);
 
-    const [isShareDialogOpen, setShareDialogOpen] = React.useState(false);
-    const [linkToShare, setLinkToShare] = React.useState<(typeof linksData)[0] | null>(null);
+    const handleShareLink = async (link: typeof linksData[0]) => {
+        const shareData = {
+            title: link.name,
+            text: `Check out this link: ${link.name}`,
+            url: link.link,
+        };
 
-    const handleOpenShareDialog = (link: (typeof linksData)[0]) => {
-        setLinkToShare(link);
-        setShareDialogOpen(true);
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+                toast({ title: "Link Shared", description: "The link has been successfully shared." });
+            } catch (error) {
+                // This can happen if the user cancels the share operation
+                console.log("Share canceled or failed", error);
+            }
+        } else {
+            // Fallback for browsers that do not support the Web Share API
+            navigator.clipboard.writeText(link.link);
+            toast({
+                title: "Link Copied",
+                description: "The affiliate link has been copied to your clipboard.",
+            });
+        }
     };
 
     const handleAddNewLink = (newLink: any) => {
@@ -986,7 +821,7 @@ export default function LinksPage() {
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
                         onLinkUpdated={handleLinkUpdated}
-                        onShare={handleOpenShareDialog}
+                        onShare={handleShareLink}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
@@ -994,7 +829,7 @@ export default function LinksPage() {
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
                         onLinkUpdated={handleLinkUpdated}
-                        onShare={handleOpenShareDialog}
+                        onShare={handleShareLink}
                     />}
             </CardContent>
             <CardFooter>
@@ -1053,19 +888,6 @@ export default function LinksPage() {
                 </div>
             </CardFooter>
         </Card>
-        {linkToShare && (
-            <ShareLinkDialog
-                link={linkToShare}
-                open={isShareDialogOpen}
-                onOpenChange={setShareDialogOpen}
-            />
-        )}
     </div>
   );
 }
-
-
-    
-
-    
-
