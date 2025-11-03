@@ -82,8 +82,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { shareLink, ShareLinkInput, ShareLinkOutput } from "@/ai/flows/share-link-flow";
-import { shareLinkSchemas } from "@/ai/flows/share-link-schemas";
+import { shareLink } from "@/ai/flows/share-link-flow";
+import { shareLinkSchemas, type ShareLinkInput, type ShareLinkOutput } from "@/ai/flows/share-link-schemas";
 
 
 const linksData = [
@@ -892,13 +892,13 @@ export default function LinksPage() {
                         />
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
-                        {!selectionMode && !isMobile ? (
+                        {!selectionMode ? (
                             <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)}>
                                 Select
                             </Button>
                         ) : null}
 
-                        {selectionMode && !isMobile ? (
+                        {selectionMode ? (
                             <>
                                 <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(false)}>
                                     Cancel
@@ -1031,3 +1031,4 @@ export default function LinksPage() {
     
 
     
+
