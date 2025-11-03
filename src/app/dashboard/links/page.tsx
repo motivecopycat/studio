@@ -504,66 +504,52 @@ const LinkCards = ({
     onShare: (link: any) => void
 }) => (
     <div className="space-y-4">
-        {links.map((link) => {
-            const cardContent = (
-                <Card 
-                    key={link.id} 
-                    className={`cursor-pointer ${selectedLinks.includes(link.id) ? 'border-primary' : ''}`}
-                    onClick={() => {
-                        if (selectionMode) {
-                            onSelectLink(link.id);
-                        }
-                    }}
-                >
-                    {link.imageUrl && (
-                        <div className="aspect-[16/9] relative" onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
-                            <Image 
-                                src={link.imageUrl} 
-                                alt={link.name} 
-                                fill
-                                className="rounded-t-lg object-cover"
-                                data-ai-hint={`${link.category} image`}
-                            />
-                        </div>
-                    )}
-                    <CardHeader onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
-                        <div className="flex justify-between items-start gap-2">
-                             <CardTitle className="text-base font-semibold leading-tight flex-1">{link.name}</CardTitle>
-                             <Badge variant={getStatusVariant(link.status)} className="shrink-0">{link.status}</Badge>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4 text-sm" onClick={(e) => { if (selectionMode) e.stopPropagation(); }}>
-                        <div className="flex justify-between">
-                            <div className="flex flex-col">
-                                <span className="text-xs text-muted-foreground">Clicks</span>
-                                <span className="font-medium text-base">{link.clicks.toLocaleString()}</span>
+        {links.map((link) => (
+            <DropdownMenu key={link.id}>
+                <DropdownMenuTrigger asChild>
+                    <Card className={`cursor-pointer ${selectedLinks.includes(link.id) ? 'border-primary' : ''}`}>
+                        {link.imageUrl && (
+                            <div className="aspect-[16/9] relative">
+                                <Image 
+                                    src={link.imageUrl} 
+                                    alt={link.name} 
+                                    fill
+                                    className="rounded-t-lg object-cover"
+                                    data-ai-hint={`${link.category} image`}
+                                />
                             </div>
-                            <div className="flex flex-col items-end">
-                                <span className="text-xs text-muted-foreground">Conversions</span>
-                                <span className="font-medium text-base">{link.conversions.toLocaleString()}</span>
+                        )}
+                        <CardHeader>
+                            <div className="flex justify-between items-start gap-2">
+                                 <CardTitle className="text-base font-semibold leading-tight flex-1">{link.name}</CardTitle>
+                                 <Badge variant={getStatusVariant(link.status)} className="shrink-0">{link.status}</Badge>
                             </div>
-                        </div>
-                         <div>
-                            <div className="text-xs text-muted-foreground">Affiliate Link</div>
-                            <div className="truncate text-primary hover:underline">
-                                <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>{link.link}</a>
+                        </CardHeader>
+                        <CardContent className="space-y-4 text-sm">
+                            <div className="flex justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-xs text-muted-foreground">Clicks</span>
+                                    <span className="font-medium text-base">{link.clicks.toLocaleString()}</span>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-xs text-muted-foreground">Conversions</span>
+                                    <span className="font-medium text-base">{link.conversions.toLocaleString()}</span>
+                                </div>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            );
-
-            return selectionMode ? <div key={link.id}>{cardContent}</div> : (
-                <DropdownMenu key={link.id}>
-                    <DropdownMenuTrigger asChild>
-                        <div>{cardContent}</div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                         <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        })}
+                             <div>
+                                <div className="text-xs text-muted-foreground">Affiliate Link</div>
+                                <div className="truncate text-primary hover:underline">
+                                    <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>{link.link}</a>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                    <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
+                </DropdownMenuContent>
+            </DropdownMenu>
+        ))}
     </div>
 );
 
@@ -689,7 +675,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                                         >
                                             Product
                                         </Button>
-                                        <Button _
+                                        <Button 
                                             type="button" 
                                             variant={field.value === 'movie' ? 'default' : 'outline'}
                                             onClick={() => field.onChange('movie')}
