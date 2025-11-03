@@ -7,7 +7,7 @@ import {
   BarChart3,
   Settings,
   PanelLeft,
-  Package2,
+  K,
   LogOut,
   User,
   Link2,
@@ -46,7 +46,7 @@ export default function DashboardHeader() {
               href="/dashboard"
               className="flex items-center gap-2 text-lg font-semibold mb-4"
             >
-              <Package2 className="h-6 w-6" />
+              <K className="h-6 w-6" />
               <span>KikaSite</span>
             </Link>
             <Link

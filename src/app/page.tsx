@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Package2 } from 'lucide-react';
+import { K } from 'lucide-react';
 import ThemeSwitcher from '@/components/theme-switcher';
 import LanguageSwitcher from '@/components/language-switcher';
 
@@ -10,9 +10,9 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link href="#" className="flex items-center justify-center" prefetch={false}>
-          <Package2 className="h-6 w-6" />
-          <span className="sr-only">KikaSite</span>
+        <Link href="#" className="flex items-center justify-center gap-2" prefetch={false}>
+          <K className="h-6 w-6" />
+          <span className="font-bold">KikaSite</span>
         </Link>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <LanguageSwitcher />
