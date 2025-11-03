@@ -36,7 +36,7 @@ export default function Home() {
                   href="/login"
                   prefetch={false}
                 >
-                  <Button size="lg">Get Starte..d</Button>
+                  <Button size="lg">Get Started</Button>
                 </Link>
               </div>
             </div>
