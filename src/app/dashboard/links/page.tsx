@@ -496,6 +496,7 @@ const LinkCards = ({
 const AddLinkSchema = z.object({
     name: z.string().min(1, { message: "Link name is required." }),
     url: z.string().url({ message: "Please enter a valid URL." }),
+    category: z.string().optional(),
 });
 
 type AddLinkValues = z.infer<typeof AddLinkSchema>;
@@ -514,6 +515,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
         defaultValues: {
             name: "",
             url: "",
+            category: "product",
         },
     });
 
@@ -530,7 +532,7 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
             epc: "$0.00",
             revenue: "$0.00",
             createdAt: new Date().toISOString().split("T")[0],
-            category: "product",
+            category: data.category || "product",
             imageUrl: `https://s.wordpress.com/mshots/v1/${encodeURIComponent(data.url)}?w=400&h=225`,
         };
         onLinkAdded(newLink);
@@ -595,6 +597,27 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="product">Product</SelectItem>
+                                            <SelectItem value="movie">Movie</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <DialogFooter>
                             <Button type="submit">Create Link</Button>
                         </DialogFooter>
@@ -614,6 +637,7 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
         defaultValues: {
             name: link.name,
             url: link.destinationUrl,
+            category: link.category || "product",
         },
     });
 
@@ -630,6 +654,7 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
             destinationUrl: data.url,
             link: shortLink,
             imageUrl: imageUrl,
+            category: data.category,
         };
         onLinkUpdated(updatedLink);
         toast({
@@ -673,6 +698,27 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
                                     <FormControl>
                                         <Input placeholder="https://..." {...field} />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="product">Product</SelectItem>
+                                            <SelectItem value="movie">Movie</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
