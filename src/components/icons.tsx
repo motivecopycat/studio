@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+import Image from "next/image";
 
 export const Icons = {
   google: (props: SVGProps<SVGSVGElement>) => (
@@ -9,18 +10,14 @@ export const Icons = {
       <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C42.022,35.637,44,30.138,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
     </svg>
   ),
-  logo: (props: SVGProps<SVGSVGElement>) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M6 6v12h12" />
-    </svg>
+  logo: ({ className, ...props }: { className?: string }) => (
+    <Image 
+        src="https://makesk.netlify.app/logo.png"
+        alt="KikaSite Logo"
+        width={24}
+        height={24}
+        className={className}
+        {...props}
+    />
   ),
 };
