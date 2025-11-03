@@ -41,6 +41,7 @@ import { User as UserIcon, LogOut, Laptop, Smartphone } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 const profileFormSchema = z.object({
   phone: z.string().max(20, "Phone number is too long.").optional(),
@@ -189,12 +190,14 @@ export default function SettingsPage() {
              <Form {...profileForm}>
                 <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-8">
                     <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16">
-                            <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
-                            <AvatarFallback>
-                            {user?.isGuest ? <UserIcon className="h-8 w-8" /> : getInitials(user?.displayName)}
-                            </AvatarFallback>
-                        </Avatar>
+                        <div className={cn("p-0.5 rounded-full", { "gradient-border": true })}>
+                          <Avatar className="h-16 w-16">
+                              <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
+                              <AvatarFallback>
+                              {user?.isGuest ? <UserIcon className="h-8 w-8" /> : getInitials(user?.displayName)}
+                              </AvatarFallback>
+                          </Avatar>
+                        </div>
                          <div className="grid gap-1">
                             <p className="font-semibold">{user?.displayName}</p>
                             <p className="text-sm text-muted-foreground">{user?.email}</p>
