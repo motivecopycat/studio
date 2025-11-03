@@ -10,7 +10,7 @@ import {
   Settings,
   AppWindow,
   CreditCard,
-  K,
+  Boxes,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserNav from "@/components/dashboard/user-nav";
@@ -34,7 +34,7 @@ export default function DashboardSidebar() {
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-            <K className="h-6 w-6" />
+            <Boxes className="h-6 w-6" />
             <span>KikaSite</span>
           </Link>
         </div>
