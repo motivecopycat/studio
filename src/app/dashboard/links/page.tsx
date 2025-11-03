@@ -64,7 +64,7 @@ import {
   BarChart3,
   Send,
 } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 import {
   Tabs,
   TabsList,
