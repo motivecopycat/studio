@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -77,6 +78,7 @@ import { shareLink } from "@/ai/flows/share-link-flow";
 import { shareLinkSchemas, type ShareLinkInput, type ShareLinkOutput } from "@/ai/flows/share-link-schemas";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const linksData = [
   {
@@ -603,17 +605,36 @@ const AddNewLinkDialog = ({ onLinkAdded }: { onLinkAdded: (newLink: any) => void
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Category</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="product">Product</SelectItem>
-                                            <SelectItem value="movie">Movie</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <FormControl>
+                                        <RadioGroup
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                            className="grid grid-cols-2 gap-4"
+                                        >
+                                            <FormItem>
+                                                <FormControl>
+                                                    <RadioGroupItem value="product" id="product" className="sr-only" />
+                                                </FormControl>
+                                                <Label
+                                                    htmlFor="product"
+                                                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                                                >
+                                                    Product
+                                                </Label>
+                                            </FormItem>
+                                            <FormItem>
+                                                <FormControl>
+                                                    <RadioGroupItem value="movie" id="movie" className="sr-only" />
+                                                </FormControl>
+                                                <Label
+                                                    htmlFor="movie"
+                                                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                                                >
+                                                    Movie
+                                                </Label>
+                                            </FormItem>
+                                        </RadioGroup>
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -708,17 +729,36 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Category</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="product">Product</SelectItem>
-                                            <SelectItem value="movie">Movie</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <FormControl>
+                                        <RadioGroup
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                            className="grid grid-cols-2 gap-4"
+                                        >
+                                            <FormItem>
+                                                <FormControl>
+                                                    <RadioGroupItem value="product" id="edit-product" className="sr-only" />
+                                                </FormControl>
+                                                <Label
+                                                    htmlFor="edit-product"
+                                                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                                                >
+                                                    Product
+                                                </Label>
+                                            </FormItem>
+                                            <FormItem>
+                                                <FormControl>
+                                                    <RadioGroupItem value="movie" id="edit-movie" className="sr-only" />
+                                                </FormControl>
+                                                <Label
+                                                    htmlFor="edit-movie"
+                                                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                                                >
+                                                    Movie
+                                                </Label>
+                                            </FormItem>
+                                        </RadioGroup>
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -999,5 +1039,7 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
 
     
