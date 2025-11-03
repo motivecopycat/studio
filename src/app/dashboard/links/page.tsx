@@ -427,7 +427,7 @@ const LinkCards = ({
     };
     
     return (
-        <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
             {links.map((link) => (
                 <DropdownMenu key={link.id} open={!selectionMode && openMenuId === link.id} onOpenChange={(isOpen) => !isOpen && setOpenMenuId(null)}>
                     <DropdownMenuTrigger asChild>
@@ -1049,4 +1049,5 @@ export default function LinksPage() {
     
 
     
+
 
