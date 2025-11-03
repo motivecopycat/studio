@@ -7,7 +7,6 @@ import {
   BarChart3,
   Settings,
   PanelLeft,
-  Boxes,
   LogOut,
   User,
   Link2,
@@ -22,6 +21,7 @@ import {
   SheetTrigger,
   SheetFooter,
 } from "@/components/ui/sheet";
+import { Icons } from "@/components/icons";
 
 import ThemeSwitcher from "@/components/theme-switcher";
 import LanguageSwitcher from "@/components/language-switcher";
@@ -46,7 +46,7 @@ export default function DashboardHeader() {
               href="/dashboard"
               className="flex items-center gap-2 text-lg font-semibold mb-4"
             >
-              <Boxes className="h-6 w-6" />
+              <Icons.logo className="h-6 w-6" />
               <span>KikaSite</span>
             </Link>
             <Link
