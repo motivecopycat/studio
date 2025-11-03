@@ -190,7 +190,7 @@ export default function SingleLinkAnalyticsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
         {kpiData.map((kpi, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -218,7 +218,7 @@ export default function SingleLinkAnalyticsPage() {
             <CardDescription>Performance over the selected period.</CardDescription>
         </CardHeader>
         <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px] w-full sm:h-[350px]">
+            <ChartContainer config={chartConfig} className="h-[250px] w-full sm:h-[350px]">
             <LineChart data={performanceData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="date" tickFormatter={(value) => format(new Date(value), 'MMM d')} tickMargin={8} />
@@ -237,3 +237,5 @@ export default function SingleLinkAnalyticsPage() {
     </div>
   );
 }
+
+  
