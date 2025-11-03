@@ -74,6 +74,9 @@ import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuIte
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { shareLink } from "@/ai/flows/share-link-flow";
+import { shareLinkSchemas, type ShareLinkInput, type ShareLinkOutput } from "@/ai/flows/share-link-schemas";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const linksData = [
   {
@@ -288,10 +291,6 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
             Analysis
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShare(); }}>
-          <Send className="mr-2 h-4 w-4" />
-          Share
-        </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={(e) => { e.stopPropagation(); onArchive(link.id); }}>
@@ -306,7 +305,6 @@ const LinksTable = ({
     selectionMode,
     selectedLinks,
     onSelectionChange,
-    onSelectAll,
     onCopy, 
     onStatusChange, 
     onArchive, 
@@ -317,7 +315,6 @@ const LinksTable = ({
     selectionMode: boolean,
     selectedLinks: string[],
     onSelectionChange: (linkId: string, checked: boolean) => void,
-    onSelectAll: (checked: boolean) => void,
     onCopy: (link: string) => void, 
     onStatusChange: (linkId: string, status: "Active" | "Paused") => void, 
     onArchive: (linkId: string) => void, 
@@ -328,14 +325,6 @@ const LinksTable = ({
         <Table>
             <TableHeader>
                 <TableRow>
-                    {selectionMode && (
-                        <TableHead padding="checkbox">
-                            <Checkbox 
-                                checked={selectedLinks.length > 0 && selectedLinks.length === links.length}
-                                onCheckedChange={(checked) => onSelectAll(Boolean(checked))}
-                            />
-                        </TableHead>
-                    )}
                     <TableHead className="w-[80px]">Preview</TableHead>
                     <TableHead>Link Name</TableHead>
                     <TableHead>Status</TableHead>
@@ -348,16 +337,15 @@ const LinksTable = ({
             {links.map((link) => (
                 <DropdownMenu key={link.id}>
                     <DropdownMenuTrigger asChild disabled={selectionMode}>
-                        <TableRow className={!selectionMode ? "cursor-pointer" : ""}>
-                            {selectionMode && (
-                                <TableCell padding="checkbox">
-                                    <Checkbox 
-                                        checked={selectedLinks.includes(link.id)}
-                                        onCheckedChange={(checked) => onSelectionChange(link.id, Boolean(checked))}
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
-                                </TableCell>
-                            )}
+                        <TableRow 
+                            className={"cursor-pointer"}
+                            onClick={() => {
+                                if (selectionMode) {
+                                    onSelectionChange(link.id, !selectedLinks.includes(link.id));
+                                }
+                            }}
+                            data-state={selectedLinks.includes(link.id) ? "selected" : ""}
+                        >
                             <TableCell>
                                 <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
                                     <Image 
@@ -447,6 +435,7 @@ const LinkCards = ({
                                     onSelectionChange(link.id, !selectedLinks.includes(link.id));
                                 }
                             }}
+                            data-state={selectedLinks.includes(link.id) ? "selected" : ""}
                         >
                             {selectionMode && (
                                 <div className="absolute top-2 right-2 z-10 bg-background/50 rounded-full">
@@ -791,10 +780,6 @@ export default function LinksPage() {
         );
     };
 
-    const handleSelectAll = (checked: boolean) => {
-        setSelectedLinks(checked ? paginatedLinks.map(link => link.id) : []);
-    };
-
     const filteredLinks = allLinks.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
@@ -902,7 +887,6 @@ export default function LinksPage() {
                         selectionMode={selectionMode}
                         selectedLinks={selectedLinks}
                         onSelectionChange={handleSelectionChange}
-                        onSelectAll={handleSelectAll}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
@@ -969,3 +953,5 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
