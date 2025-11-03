@@ -47,13 +47,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -69,8 +62,6 @@ import {
   ChevronDown,
   BarChart3,
   Send,
-  Loader2,
-  MoreVertical,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -80,6 +71,9 @@ import {
 } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { shareLink } from "@/ai/flows/share-link-flow";
 
 const linksData = [
   {
@@ -307,11 +301,41 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
     </>
 );
 
-const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: (link: any) => void }) => {
+const LinksTable = ({ 
+    links, 
+    selectionMode,
+    selectedLinks,
+    onSelectionChange,
+    onSelectAll,
+    onCopy, 
+    onStatusChange, 
+    onArchive, 
+    onLinkUpdated, 
+    onShare 
+}: { 
+    links: typeof linksData,
+    selectionMode: boolean,
+    selectedLinks: string[],
+    onSelectionChange: (linkId: string, checked: boolean) => void,
+    onSelectAll: (checked: boolean) => void,
+    onCopy: (link: string) => void, 
+    onStatusChange: (linkId: string, status: "Active" | "Paused") => void, 
+    onArchive: (linkId: string) => void, 
+    onLinkUpdated: (updatedLink: any) => void, 
+    onShare: (link: any) => void 
+}) => {
     return (
         <Table>
             <TableHeader>
                 <TableRow>
+                    {selectionMode && (
+                        <TableHead padding="checkbox">
+                            <Checkbox 
+                                checked={selectedLinks.length > 0 && selectedLinks.length === links.length}
+                                onCheckedChange={(checked) => onSelectAll(Boolean(checked))}
+                            />
+                        </TableHead>
+                    )}
                     <TableHead className="w-[80px]">Preview</TableHead>
                     <TableHead>Link Name</TableHead>
                     <TableHead>Status</TableHead>
@@ -323,8 +347,17 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
             <TableBody>
             {links.map((link) => (
                 <DropdownMenu key={link.id}>
-                    <DropdownMenuTrigger asChild>
-                        <TableRow className="cursor-pointer">
+                    <DropdownMenuTrigger asChild disabled={selectionMode}>
+                        <TableRow className={!selectionMode ? "cursor-pointer" : ""}>
+                            {selectionMode && (
+                                <TableCell padding="checkbox">
+                                    <Checkbox 
+                                        checked={selectedLinks.includes(link.id)}
+                                        onCheckedChange={(checked) => onSelectionChange(link.id, Boolean(checked))}
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                </TableCell>
+                            )}
                             <TableCell>
                                 <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
                                     <Image 
@@ -350,9 +383,11 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
                             <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
                         </TableRow>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
-                    </DropdownMenuContent>
+                    {!selectionMode && (
+                        <DropdownMenuContent align="end">
+                            <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
+                        </DropdownMenuContent>
+                    )}
                 </DropdownMenu>
             ))}
             </TableBody>
@@ -362,6 +397,9 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
 
 const LinkCards = ({ 
     links,
+    selectionMode,
+    selectedLinks,
+    onSelectionChange,
     onCopy,
     onStatusChange,
     onArchive,
@@ -369,6 +407,9 @@ const LinkCards = ({
     onShare,
 }: { 
     links: typeof linksData,
+    selectionMode: boolean,
+    selectedLinks: string[],
+    onSelectionChange: (linkId: string, checked: boolean) => void,
     onCopy: (link: string) => void,
     onStatusChange: (linkId: string, status: "Active" | "Paused") => void,
     onArchive: (linkId: string) => void,
@@ -379,6 +420,7 @@ const LinkCards = ({
     const longPressTimer = React.useRef<NodeJS.Timeout>();
 
     const handleTouchStart = (linkId: string) => {
+        if (selectionMode) return;
         longPressTimer.current = setTimeout(() => {
             setOpenMenuId(linkId);
         }, 500);
@@ -393,14 +435,27 @@ const LinkCards = ({
     return (
         <div className="space-y-4">
             {links.map((link) => (
-                <DropdownMenu key={link.id} open={openMenuId === link.id} onOpenChange={(isOpen) => !isOpen && setOpenMenuId(null)}>
-                    <DropdownMenuTrigger asChild>
+                <DropdownMenu key={link.id} open={!selectionMode && openMenuId === link.id} onOpenChange={(isOpen) => !isOpen && setOpenMenuId(null)}>
+                    <DropdownMenuTrigger asChild disabled={selectionMode}>
                         <Card 
                             className="overflow-hidden"
                             onTouchStart={() => handleTouchStart(link.id)}
                             onTouchEnd={handleTouchEnd}
-                            onContextMenu={(e) => { e.preventDefault(); setOpenMenuId(link.id); }}
+                            onContextMenu={(e) => { e.preventDefault(); if (!selectionMode) setOpenMenuId(link.id); }}
+                            onClick={() => {
+                                if (selectionMode) {
+                                    onSelectionChange(link.id, !selectedLinks.includes(link.id));
+                                }
+                            }}
                         >
+                            {selectionMode && (
+                                <div className="absolute top-2 right-2 z-10 bg-background/50 rounded-full">
+                                    <Checkbox
+                                        checked={selectedLinks.includes(link.id)}
+                                        className="m-2"
+                                    />
+                                </div>
+                            )}
                             {link.imageUrl && (
                                 <div className="aspect-[16/9] relative">
                                     <Image 
@@ -438,9 +493,11 @@ const LinkCards = ({
                             </CardContent>
                         </Card>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
-                    </DropdownMenuContent>
+                    {!selectionMode && (
+                        <DropdownMenuContent align="end" className="w-56">
+                            <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
+                        </DropdownMenuContent>
+                    )}
                 </DropdownMenu>
             ))}
         </div>
@@ -728,6 +785,16 @@ export default function LinksPage() {
         ));
     };
 
+    const handleSelectionChange = (linkId: string, checked: boolean) => {
+        setSelectedLinks(prev => 
+            checked ? [...prev, linkId] : prev.filter(id => id !== linkId)
+        );
+    };
+
+    const handleSelectAll = (checked: boolean) => {
+        setSelectedLinks(checked ? paginatedLinks.map(link => link.id) : []);
+    };
+
     const filteredLinks = allLinks.filter(link => {
         const matchesSearch = link.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || link.status.toLowerCase() === statusFilter;
@@ -821,6 +888,9 @@ export default function LinksPage() {
                 {isMobile ? 
                     <LinkCards 
                         links={paginatedLinks}
+                        selectionMode={selectionMode}
+                        selectedLinks={selectedLinks}
+                        onSelectionChange={handleSelectionChange}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
@@ -829,6 +899,10 @@ export default function LinksPage() {
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
+                        selectionMode={selectionMode}
+                        selectedLinks={selectedLinks}
+                        onSelectionChange={handleSelectionChange}
+                        onSelectAll={handleSelectAll}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
@@ -839,9 +913,9 @@ export default function LinksPage() {
             <CardFooter>
                 <div className="flex items-center justify-between w-full flex-wrap gap-4">
                     <div className="text-sm text-muted-foreground">
-                        {selectedLinks.length > 0
-                        ? `${selectedLinks.length} of ${paginatedLinks.length} selected`
-                        : `Showing ${paginatedLinks.length} of ${filteredLinks.length} links`}
+                        {selectionMode && selectedLinks.length > 0
+                        ? `${selectedLinks.length} of ${paginatedLinks.length} selected on this page`
+                        : `Showing ${paginatedLinks.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0}-${Math.min(currentPage * itemsPerPage, filteredLinks.length)} of ${filteredLinks.length} links`}
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -866,7 +940,7 @@ export default function LinksPage() {
                             </Select>
                         </div>
                         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                            Page {currentPage} of {totalPages}
+                            Page {totalPages > 0 ? currentPage : 0} of {totalPages}
                         </div>
                         <div className="flex items-center gap-2">
                             <Button
@@ -895,11 +969,3 @@ export default function LinksPage() {
     </div>
   );
 }
-
-    
-
-    
-
-
-
-    

@@ -75,7 +75,7 @@ const TableHead = React.forwardRef<
     className={cn(
       "h-12 text-left align-middle font-medium text-muted-foreground",
       padding === "default" && "px-4",
-      padding === "checkbox" && "px-2",
+      padding === "checkbox" && "p-2",
       className
     )}
     {...props}
