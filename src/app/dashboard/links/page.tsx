@@ -70,6 +70,7 @@ import {
   BarChart3,
   Send,
   Loader2,
+  MoreVertical,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -80,6 +81,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { shareLink, type ShareLinkInput, type ShareLinkOutput } from "@/ai/flows/share-link-flow";
+import { shareLinkSchemas } from "@/ai/flows/share-link-schemas";
 
 
 const linksData = [
@@ -265,7 +269,7 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: () => void }) => (
+const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare, onAiShare }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: () => void, onAiShare: () => void }) => (
     <>
       <DropdownMenuGroup>
         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onCopy(link.link); }}>
@@ -299,6 +303,10 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
           <Send className="mr-2 h-4 w-4" />
           Share
         </DropdownMenuItem>
+         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAiShare(); }}>
+          <Send className="mr-2 h-4 w-4" />
+          Share with friends (AI)
+        </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={(e) => { e.stopPropagation(); onArchive(link.id); }}>
@@ -308,7 +316,7 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
     </>
 );
 
-const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: (link: any) => void }) => {
+const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare, onAiShare }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: (link: any) => void, onAiShare: (link: any) => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -319,42 +327,49 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
                     <TableHead>Affiliate Link</TableHead>
                     <TableHead className="text-right">Clicks</TableHead>
                     <TableHead className="text-right">Conversions</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
             {links.map((link) => (
-                <DropdownMenu key={link.id}>
-                    <DropdownMenuTrigger asChild>
-                        <TableRow className="cursor-pointer">
-                        <TableCell>
-                            <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
-                                <Image 
-                                    src={link.imageUrl} 
-                                    alt={link.name} 
-                                    fill
-                                    className="object-cover"
-                                />
-                            </div>
-                        </TableCell>
-                        <TableCell className="font-medium">{link.name}</TableCell>
-                        <TableCell>
-                            <Badge variant={getStatusVariant(link.status)}>
-                            {link.status}
-                            </Badge>
-                        </TableCell>
-                        <TableCell>
-                            <a href={link.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]" onClick={(e) => e.stopPropagation()}>
-                                {link.link}
-                            </a>
-                        </TableCell>
-                        <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
-                        <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                        </TableRow>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <TableRow key={link.id}>
+                    <TableCell>
+                        <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
+                            <Image 
+                                src={link.imageUrl} 
+                                alt={link.name} 
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{link.name}</TableCell>
+                    <TableCell>
+                        <Badge variant={getStatusVariant(link.status)}>
+                        {link.status}
+                        </Badge>
+                    </TableCell>
+                    <TableCell>
+                        <a href={link.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]" onClick={(e) => e.stopPropagation()}>
+                            {link.link}
+                        </a>
+                    </TableCell>
+                    <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
+                    <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
+                    <TableCell>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                    <span className="sr-only">Open menu</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} onAiShare={() => onAiShare(link)} />
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </TableCell>
+                </TableRow>
             ))}
             </TableBody>
         </Table>
@@ -363,74 +378,92 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
 
 const LinkCards = ({ 
     links,
-    selectedLinks,
-    onSelectLink,
-    selectionMode,
     onCopy,
     onStatusChange,
     onArchive,
     onLinkUpdated,
-    onShare
+    onShare,
+    onAiShare
 }: { 
     links: typeof linksData,
-    selectedLinks: string[],
-    onSelectLink: (linkId: string) => void,
-    selectionMode: boolean,
     onCopy: (link: string) => void,
     onStatusChange: (linkId: string, status: "Active" | "Paused") => void,
     onArchive: (linkId: string) => void,
     onLinkUpdated: (updatedLink: any) => void,
-    onShare: (link: any) => void
-}) => (
-    <div className="space-y-4">
-        {links.map((link) => (
-            <DropdownMenu key={link.id}>
-                <DropdownMenuTrigger asChild>
-                    <Card className={`cursor-pointer ${selectedLinks.includes(link.id) ? 'border-primary' : ''}`}>
-                        {link.imageUrl && (
-                            <div className="aspect-[16/9] relative">
-                                <Image 
-                                    src={link.imageUrl} 
-                                    alt={link.name} 
-                                    fill
-                                    className="rounded-t-lg object-cover"
-                                    data-ai-hint={`${link.category} image`}
-                                />
-                            </div>
-                        )}
-                        <CardHeader>
-                            <div className="flex justify-between items-start gap-2">
-                                 <CardTitle className="text-base font-semibold leading-tight flex-1">{link.name}</CardTitle>
-                                 <Badge variant={getStatusVariant(link.status)} className="shrink-0">{link.status}</Badge>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4 text-sm">
-                            <div className="flex justify-between">
-                                <div className="flex flex-col">
-                                    <span className="text-xs text-muted-foreground">Clicks</span>
-                                    <span className="font-medium text-base">{link.clicks.toLocaleString()}</span>
+    onShare: (link: any) => void,
+    onAiShare: (link: any) => void
+}) => {
+    const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
+    const longPressTimer = React.useRef<NodeJS.Timeout>();
+
+    const handleTouchStart = (linkId: string) => {
+        longPressTimer.current = setTimeout(() => {
+            setOpenMenuId(linkId);
+        }, 500);
+    };
+
+    const handleTouchEnd = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+        }
+    };
+    
+    return (
+        <div className="space-y-4">
+            {links.map((link) => (
+                <DropdownMenu key={link.id} open={openMenuId === link.id} onOpenChange={(isOpen) => !isOpen && setOpenMenuId(null)}>
+                    <DropdownMenuTrigger asChild>
+                        <Card 
+                            className="overflow-hidden"
+                            onTouchStart={() => handleTouchStart(link.id)}
+                            onTouchEnd={handleTouchEnd}
+                            onContextMenu={(e) => { e.preventDefault(); setOpenMenuId(link.id); }}
+                        >
+                            {link.imageUrl && (
+                                <div className="aspect-[16/9] relative">
+                                    <Image 
+                                        src={link.imageUrl} 
+                                        alt={link.name} 
+                                        fill
+                                        className="object-cover"
+                                        data-ai-hint={`${link.category} image`}
+                                    />
                                 </div>
-                                <div className="flex flex-col items-end">
-                                    <span className="text-xs text-muted-foreground">Conversions</span>
-                                    <span className="font-medium text-base">{link.conversions.toLocaleString()}</span>
+                            )}
+                            <CardHeader>
+                                <div className="flex justify-between items-start gap-2">
+                                     <CardTitle className="text-base font-semibold leading-tight flex-1">{link.name}</CardTitle>
+                                     <Badge variant={getStatusVariant(link.status)} className="shrink-0">{link.status}</Badge>
                                 </div>
-                            </div>
-                             <div>
-                                <div className="text-xs text-muted-foreground">Affiliate Link</div>
-                                <div className="truncate text-primary hover:underline">
-                                    <a href={link.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>{link.link}</a>
+                            </CardHeader>
+                            <CardContent className="space-y-4 text-sm">
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-muted-foreground">Clicks</span>
+                                        <span className="font-medium text-base">{link.clicks.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-xs text-muted-foreground">Conversions</span>
+                                        <span className="font-medium text-base">{link.conversions.toLocaleString()}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                    <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
-                </DropdownMenuContent>
-            </DropdownMenu>
-        ))}
-    </div>
-);
+                                 <div>
+                                    <div className="text-xs text-muted-foreground">Affiliate Link</div>
+                                    <div className="truncate text-primary hover:underline">
+                                        <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} onAiShare={() => onAiShare(link)} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            ))}
+        </div>
+    );
+};
 
 const AddLinkSchema = z.object({
     name: z.string().min(1, { message: "Link name is required." }),
@@ -440,8 +473,6 @@ const AddLinkSchema = z.object({
 type AddLinkValues = z.infer<typeof AddLinkSchema>;
 
 const createShortLink = (longUrl: string): string => {
-    // In a real app, this would call a URL shortening service.
-    // For now, we'll simulate it.
     const slug = Math.random().toString(36).substring(2, 8);
     return `https://kika.site/${slug}`;
 };
@@ -628,6 +659,52 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
     )
 }
 
+const ShareLinkDialog = ({ open, onOpenChange, link, onShare }: { open: boolean, onOpenChange: (open: boolean) => void, link: any, onShare: (friendName: string, customMessage?: string) => void }) => {
+    const [friendName, setFriendName] = React.useState("");
+    const [customMessage, setCustomMessage] = React.useState("");
+
+    const handleShare = () => {
+        onShare(friendName, customMessage);
+    }
+    
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Share with a friend (AI)</DialogTitle>
+                    <DialogDescription>
+                        Generate a personalized message to share this link.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="friend-name">Friend's Name</Label>
+                        <Input 
+                            id="friend-name" 
+                            placeholder="e.g. Jane" 
+                            value={friendName} 
+                            onChange={(e) => setFriendName(e.target.value)} 
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="custom-message">Custom Message (Optional)</Label>
+                        <Textarea 
+                            id="custom-message" 
+                            placeholder="e.g. Check this out!"
+                            value={customMessage}
+                            onChange={(e) => setCustomMessage(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleShare}>Generate & Share</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
 export default function LinksPage() {
     const isMobile = useIsMobile();
     const { toast } = useToast();
@@ -638,6 +715,62 @@ export default function LinksPage() {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
     const [selectionMode, setSelectionMode] = React.useState(false);
+    const [isShareDialogOpen, setShareDialogOpen] = React.useState(false);
+    const [isGenerating, setIsGenerating] = React.useState(false);
+    const [selectedLinkForShare, setSelectedLinkForShare] = React.useState<any | null>(null);
+
+
+    const handleAiShareClick = (link: any) => {
+        setSelectedLinkForShare(link);
+        setShareDialogOpen(true);
+    };
+
+    const handleGenerateAndShare = async (friendName: string, customMessage?: string) => {
+        if (!selectedLinkForShare || !friendName) {
+            toast({
+                variant: "destructive",
+                title: "Friend's name is required",
+            });
+            return;
+        }
+
+        setIsGenerating(true);
+
+        try {
+            const result = await shareLink({
+                linkName: selectedLinkForShare.name,
+                friendName: friendName,
+                customMessage: customMessage
+            });
+            
+            if (result?.generatedMessage) {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: selectedLinkForShare.name,
+                        text: result.generatedMessage,
+                        url: selectedLinkForShare.link,
+                    });
+                } else {
+                    await navigator.clipboard.writeText(`${result.generatedMessage} ${selectedLinkForShare.link}`);
+                    toast({
+                        title: "Message Copied!",
+                        description: "The generated message and link have been copied to your clipboard.",
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("AI share error:", error);
+            toast({
+                variant: "destructive",
+                title: "Error Generating Message",
+                description: "There was an issue with the AI. Please try again.",
+            });
+        } finally {
+            setIsGenerating(false);
+            setShareDialogOpen(false);
+        }
+    };
+
 
     const handleShareLink = async (link: typeof linksData[0]) => {
         const shareData = {
@@ -727,14 +860,6 @@ export default function LinksPage() {
         currentPage * itemsPerPage
     );
     
-    const handleSelectLink = (linkId: string) => {
-        setSelectedLinks(prev => 
-            prev.includes(linkId) 
-                ? prev.filter(id => id !== linkId)
-                : [...prev, linkId]
-        );
-    };
-
     React.useEffect(() => {
         if (!selectionMode) {
             setSelectedLinks([]);
@@ -774,11 +899,13 @@ export default function LinksPage() {
                         />
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
-                        {!selectionMode ? (
+                        {!selectionMode && !isMobile ? (
                             <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(true)}>
                                 Select
                             </Button>
-                        ) : (
+                        ) : null}
+
+                        {selectionMode && !isMobile ? (
                             <>
                                 <Button variant="outline" className="flex-1 sm:flex-initial" onClick={() => setSelectionMode(false)}>
                                     Cancel
@@ -797,7 +924,7 @@ export default function LinksPage() {
                                     </PopoverContent>
                                 </Popover>
                             </>
-                        )}
+                        ) : null}
                          <AddNewLinkDialog onLinkAdded={handleAddNewLink} />
                     </div>
                 </div>
@@ -814,14 +941,12 @@ export default function LinksPage() {
                 {isMobile ? 
                     <LinkCards 
                         links={paginatedLinks}
-                        selectedLinks={selectedLinks}
-                        onSelectLink={handleSelectLink}
-                        selectionMode={selectionMode}
                         onCopy={handleCopyLink}
                         onStatusChange={handleStatusChange}
                         onArchive={handleArchiveLink}
                         onLinkUpdated={handleLinkUpdated}
                         onShare={handleShareLink}
+                        onAiShare={handleAiShareClick}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
@@ -830,6 +955,7 @@ export default function LinksPage() {
                         onArchive={handleArchiveLink}
                         onLinkUpdated={handleLinkUpdated}
                         onShare={handleShareLink}
+                        onAiShare={handleAiShareClick}
                     />}
             </CardContent>
             <CardFooter>
@@ -888,6 +1014,25 @@ export default function LinksPage() {
                 </div>
             </CardFooter>
         </Card>
+
+        {selectedLinkForShare && (
+            <ShareLinkDialog
+                open={isShareDialogOpen}
+                onOpenChange={setShareDialogOpen}
+                link={selectedLinkForShare}
+                onShare={handleGenerateAndShare}
+            />
+        )}
+        {isGenerating && (
+             <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
+                <div className="flex items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="text-lg">Generating message...</span>
+                </div>
+            </div>
+        )}
     </div>
   );
 }
+
+    
