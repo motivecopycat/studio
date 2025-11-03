@@ -80,11 +80,6 @@ import {
 } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { shareLink } from "@/ai/flows/share-link-flow";
-import { shareLinkSchemas, type ShareLinkInput, type ShareLinkOutput } from "@/ai/flows/share-link-schemas";
-
 
 const linksData = [
   {
@@ -269,7 +264,7 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare, onAiShare }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: () => void, onAiShare: () => void }) => (
+const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare }: { link: (typeof linksData)[0], onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: () => void }) => (
     <>
       <DropdownMenuGroup>
         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onCopy(link.link); }}>
@@ -303,10 +298,6 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
           <Send className="mr-2 h-4 w-4" />
           Share
         </DropdownMenuItem>
-         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAiShare(); }}>
-          <Send className="mr-2 h-4 w-4" />
-          Share with friends (AI)
-        </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={(e) => { e.stopPropagation(); onArchive(link.id); }}>
@@ -316,7 +307,7 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
     </>
 );
 
-const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare, onAiShare }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: (link: any) => void, onAiShare: (link: any) => void }) => {
+const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, onShare }: { links: typeof linksData, onCopy: (link: string) => void, onStatusChange: (linkId: string, status: "Active" | "Paused") => void, onArchive: (linkId: string) => void, onLinkUpdated: (updatedLink: any) => void, onShare: (link: any) => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -360,7 +351,7 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
                         </TableRow>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} onAiShare={() => onAiShare(link)} />
+                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             ))}
@@ -376,7 +367,6 @@ const LinkCards = ({
     onArchive,
     onLinkUpdated,
     onShare,
-    onAiShare
 }: { 
     links: typeof linksData,
     onCopy: (link: string) => void,
@@ -384,7 +374,6 @@ const LinkCards = ({
     onArchive: (linkId: string) => void,
     onLinkUpdated: (updatedLink: any) => void,
     onShare: (link: any) => void,
-    onAiShare: (link: any) => void
 }) => {
     const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
     const longPressTimer = React.useRef<NodeJS.Timeout>();
@@ -450,7 +439,7 @@ const LinkCards = ({
                         </Card>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
-                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} onAiShare={() => onAiShare(link)} />
+                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             ))}
@@ -652,52 +641,6 @@ const EditLinkDialog = ({ link, onLinkUpdated, children }: { link: any, onLinkUp
     )
 }
 
-const ShareLinkDialog = ({ open, onOpenChange, link, onShare }: { open: boolean, onOpenChange: (open: boolean) => void, link: any, onShare: (friendName: string, customMessage?: string) => void }) => {
-    const [friendName, setFriendName] = React.useState("");
-    const [customMessage, setCustomMessage] = React.useState("");
-
-    const handleShare = () => {
-        onShare(friendName, customMessage);
-    }
-    
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Share with a friend (AI)</DialogTitle>
-                    <DialogDescription>
-                        Generate a personalized message to share this link.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="friend-name">Friend's Name</Label>
-                        <Input 
-                            id="friend-name" 
-                            placeholder="e.g. Jane" 
-                            value={friendName} 
-                            onChange={(e) => setFriendName(e.target.value)} 
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="custom-message">Custom Message (Optional)</Label>
-                        <Textarea 
-                            id="custom-message" 
-                            placeholder="e.g. Check this out!"
-                            value={customMessage}
-                            onChange={(e) => setCustomMessage(e.target.value)}
-                        />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleShare}>Generate & Share</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
-};
-
-
 export default function LinksPage() {
     const isMobile = useIsMobile();
     const { toast } = useToast();
@@ -708,62 +651,6 @@ export default function LinksPage() {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
     const [selectionMode, setSelectionMode] = React.useState(false);
-    const [isShareDialogOpen, setShareDialogOpen] = React.useState(false);
-    const [isGenerating, setIsGenerating] = React.useState(false);
-    const [selectedLinkForShare, setSelectedLinkForShare] = React.useState<any | null>(null);
-
-
-    const handleAiShareClick = (link: any) => {
-        setSelectedLinkForShare(link);
-        setShareDialogOpen(true);
-    };
-
-    const handleGenerateAndShare = async (friendName: string, customMessage?: string) => {
-        if (!selectedLinkForShare || !friendName) {
-            toast({
-                variant: "destructive",
-                title: "Friend's name is required",
-            });
-            return;
-        }
-
-        setIsGenerating(true);
-
-        try {
-            const result = await shareLink({
-                linkName: selectedLinkForShare.name,
-                friendName: friendName,
-                customMessage: customMessage
-            });
-            
-            if (result?.generatedMessage) {
-                if (navigator.share) {
-                    await navigator.share({
-                        title: selectedLinkForShare.name,
-                        text: result.generatedMessage,
-                        url: selectedLinkForShare.link,
-                    });
-                } else {
-                    await navigator.clipboard.writeText(`${result.generatedMessage} ${selectedLinkForShare.link}`);
-                    toast({
-                        title: "Message Copied!",
-                        description: "The generated message and link have been copied to your clipboard.",
-                    });
-                }
-            }
-        } catch (error) {
-            console.error("AI share error:", error);
-            toast({
-                variant: "destructive",
-                title: "Error Generating Message",
-                description: "There was an issue with the AI. Please try again.",
-            });
-        } finally {
-            setIsGenerating(false);
-            setShareDialogOpen(false);
-        }
-    };
-
 
     const handleShareLink = async (link: typeof linksData[0]) => {
         const shareData = {
@@ -939,7 +826,6 @@ export default function LinksPage() {
                         onArchive={handleArchiveLink}
                         onLinkUpdated={handleLinkUpdated}
                         onShare={handleShareLink}
-                        onAiShare={handleAiShareClick}
                     /> : 
                     <LinksTable 
                         links={paginatedLinks}
@@ -948,7 +834,6 @@ export default function LinksPage() {
                         onArchive={handleArchiveLink}
                         onLinkUpdated={handleLinkUpdated}
                         onShare={handleShareLink}
-                        onAiShare={handleAiShareClick}
                     />}
             </CardContent>
             <CardFooter>
@@ -1007,23 +892,6 @@ export default function LinksPage() {
                 </div>
             </CardFooter>
         </Card>
-
-        {selectedLinkForShare && (
-            <ShareLinkDialog
-                open={isShareDialogOpen}
-                onOpenChange={setShareDialogOpen}
-                link={selectedLinkForShare}
-                onShare={handleGenerateAndShare}
-            />
-        )}
-        {isGenerating && (
-             <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
-                <div className="flex items-center gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                    <span className="text-lg">Generating message...</span>
-                </div>
-            </div>
-        )}
     </div>
   );
 }
@@ -1032,3 +900,6 @@ export default function LinksPage() {
 
     
 
+
+
+    
