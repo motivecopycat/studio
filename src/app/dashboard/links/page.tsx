@@ -293,6 +293,10 @@ const LinkActionsContent = ({ link, onCopy, onStatusChange, onArchive, onLinkUpd
             Analysis
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShare(); }}>
+          <Send className="mr-2 h-4 w-4" />
+          Share
+        </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40" onClick={(e) => { e.stopPropagation(); onArchive(link.id); }}>
@@ -338,7 +342,7 @@ const LinksTable = ({
             <TableBody>
             {links.map((link) => (
                 <DropdownMenu key={link.id}>
-                    <DropdownMenuTrigger asChild disabled={selectionMode}>
+                    <DropdownMenuTrigger asChild>
                         <TableRow 
                             className={"cursor-pointer"}
                             onClick={() => {
@@ -426,7 +430,7 @@ const LinkCards = ({
         <div className="space-y-4">
             {links.map((link) => (
                 <DropdownMenu key={link.id} open={!selectionMode && openMenuId === link.id} onOpenChange={(isOpen) => !isOpen && setOpenMenuId(null)}>
-                    <DropdownMenuTrigger asChild disabled={selectionMode}>
+                    <DropdownMenuTrigger asChild>
                         <Card 
                             className="overflow-hidden"
                             onTouchStart={() => handleTouchStart(link.id)}
@@ -435,6 +439,8 @@ const LinkCards = ({
                             onClick={() => {
                                 if (selectionMode) {
                                     onSelectionChange(link.id, !selectedLinks.includes(link.id));
+                                } else {
+                                     setOpenMenuId(link.id);
                                 }
                             }}
                             data-state={selectedLinks.includes(link.id) ? "selected" : ""}
