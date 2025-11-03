@@ -82,7 +82,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { shareLink, type ShareLinkInput, type ShareLinkOutput } from "@/ai/flows/share-link-flow";
+import { shareLink, ShareLinkInput, ShareLinkOutput } from "@/ai/flows/share-link-flow";
 import { shareLinkSchemas } from "@/ai/flows/share-link-schemas";
 
 
@@ -327,49 +327,42 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
                     <TableHead>Affiliate Link</TableHead>
                     <TableHead className="text-right">Clicks</TableHead>
                     <TableHead className="text-right">Conversions</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
             {links.map((link) => (
-                <TableRow key={link.id}>
-                    <TableCell>
-                        <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
-                            <Image 
-                                src={link.imageUrl} 
-                                alt={link.name} 
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{link.name}</TableCell>
-                    <TableCell>
-                        <Badge variant={getStatusVariant(link.status)}>
-                        {link.status}
-                        </Badge>
-                    </TableCell>
-                    <TableCell>
-                        <button onClick={() => onCopy(link.link)} className="text-primary hover:underline truncate block max-w-[250px] text-left">
-                            {link.link}
-                        </button>
-                    </TableCell>
-                    <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
-                    <TableCell>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreVertical className="h-4 w-4" />
-                                    <span className="sr-only">Open menu</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} onAiShare={() => onAiShare(link)} />
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                </TableRow>
+                <DropdownMenu key={link.id}>
+                    <DropdownMenuTrigger asChild>
+                        <TableRow className="cursor-pointer">
+                            <TableCell>
+                                <div className="w-[64px] h-[36px] relative rounded-md overflow-hidden">
+                                    <Image 
+                                        src={link.imageUrl} 
+                                        alt={link.name} 
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            </TableCell>
+                            <TableCell className="font-medium">{link.name}</TableCell>
+                            <TableCell>
+                                <Badge variant={getStatusVariant(link.status)}>
+                                {link.status}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>
+                                <button onClick={(e) => { e.stopPropagation(); onCopy(link.link); }} className="text-primary hover:underline truncate block max-w-[250px] text-left">
+                                    {link.link}
+                                </button>
+                            </TableCell>
+                            <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
+                        </TableRow>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <LinkActionsContent link={link} onCopy={onCopy} onStatusChange={onStatusChange} onArchive={onArchive} onLinkUpdated={onLinkUpdated} onShare={() => onShare(link)} onAiShare={() => onAiShare(link)} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
             ))}
             </TableBody>
         </Table>
@@ -449,7 +442,7 @@ const LinkCards = ({
                                 </div>
                                  <div>
                                     <div className="text-xs text-muted-foreground">Affiliate Link</div>
-                                    <button onClick={() => onCopy(link.link)} className="truncate text-primary hover:underline text-left">
+                                    <button onClick={(e) => { e.stopPropagation(); onCopy(link.link); }} className="truncate text-primary hover:underline text-left">
                                         {link.link}
                                     </button>
                                 </div>
