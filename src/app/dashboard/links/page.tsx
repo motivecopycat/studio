@@ -432,7 +432,7 @@ const LinkCards = ({
                 <DropdownMenu key={link.id} open={!selectionMode && openMenuId === link.id} onOpenChange={(isOpen) => !isOpen && setOpenMenuId(null)}>
                     <DropdownMenuTrigger asChild>
                         <Card 
-                            className="overflow-hidden"
+                            className="overflow-hidden relative"
                             onTouchStart={() => handleTouchStart(link.id)}
                             onTouchEnd={handleTouchEnd}
                             onContextMenu={(e) => { e.preventDefault(); if (!selectionMode) setOpenMenuId(link.id); }}
@@ -440,7 +440,7 @@ const LinkCards = ({
                                 if (selectionMode) {
                                     onSelectionChange(link.id, !selectedLinks.includes(link.id));
                                 } else {
-                                     setOpenMenuId(link.id);
+                                     // This is for regular click, maybe navigate or open menu
                                 }
                             }}
                             data-state={selectedLinks.includes(link.id) ? "selected" : ""}
@@ -1049,3 +1049,4 @@ export default function LinksPage() {
     
 
     
+
