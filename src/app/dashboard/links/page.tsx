@@ -350,9 +350,9 @@ const LinksTable = ({ links, onCopy, onStatusChange, onArchive, onLinkUpdated, o
                         </Badge>
                     </TableCell>
                     <TableCell>
-                        <a href={link.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block max-w-[250px]" onClick={(e) => e.stopPropagation()}>
+                        <button onClick={() => onCopy(link.link)} className="text-primary hover:underline truncate block max-w-[250px] text-left">
                             {link.link}
-                        </a>
+                        </button>
                     </TableCell>
                     <TableCell className="text-right">{link.clicks.toLocaleString()}</TableCell>
                     <TableCell className="text-right">{link.conversions.toLocaleString()}</TableCell>
@@ -449,9 +449,9 @@ const LinkCards = ({
                                 </div>
                                  <div>
                                     <div className="text-xs text-muted-foreground">Affiliate Link</div>
-                                    <div className="truncate text-primary hover:underline">
-                                        <a href={link.link} target="_blank" rel="noopener noreferrer">{link.link}</a>
-                                    </div>
+                                    <button onClick={() => onCopy(link.link)} className="truncate text-primary hover:underline text-left">
+                                        {link.link}
+                                    </button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -1034,5 +1034,7 @@ export default function LinksPage() {
     </div>
   );
 }
+
+    
 
     
