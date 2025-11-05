@@ -47,6 +47,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 
 // Data is hardcoded for now, in a real app this would be fetched.
 const linksData = [
