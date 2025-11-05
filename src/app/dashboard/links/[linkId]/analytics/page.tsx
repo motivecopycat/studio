@@ -138,11 +138,11 @@ export default function SingleLinkAnalyticsPage() {
                 <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex-grow space-y-1">
-                <h1 className="text-2xl font-bold tracking-tight line-clamp-2" title={linkData.name}>
+                <h1 className="text-2xl font-bold tracking-tight" title={linkData.name}>
                     Analysis: {linkData.name}
                 </h1>
-                <div className="flex items-center gap-x-2 gap-y-1 text-sm text-muted-foreground flex-wrap">
-                    <Badge variant={getStatusVariant(linkData.status)}>{linkData.status}</Badge>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+                    <Badge variant={getStatusVariant(linkData.status)} className="w-fit">{linkData.status}</Badge>
                     <div className="flex items-center gap-1 truncate">
                         <Link2 className="h-3 w-3" />
                         <a href={linkData.link} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{linkData.link}</a>
